@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <name>iiwa_robotiq_state_publisher</name>
+  <version>0.0.0</version>
+  <description>The iiwa_robotiq_state_publisher package</description>
+
+  <maintainer email="abba@brown.edu">Ben A.</maintainer>
+
+  <license>BSD</license>
+  
+  <build_depend>iiwa_robotiq_description</build_depend>
+  <run_depend>iiwa_robotiq_description</run_depend>
+  
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>
