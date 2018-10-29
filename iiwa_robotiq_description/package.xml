@@ -9,9 +9,9 @@
   <license>BSD</license>
   
   <build_depend>iiwa_description</build_depend>
-  <build_depend>robotiq_s_model_visualization</build_depend>
+  <build_depend>robotiq_3f_gripper_visualization</build_depend>
   <run_depend>iiwa_description</run_depend>
-  <run_depend>robotiq_s_model_visualization</run_depend>
+  <run_depend>robotiq_3f_gripper_visualization</run_depend>
   
   
   <buildtool_depend>catkin</buildtool_depend>
