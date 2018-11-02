@@ -13,27 +13,20 @@
   <!--  Arguments for the iiwa7 macro  -->
   <xacro:arg name="hardware_interface" default="PositionJointInterface"/>
   <xacro:arg name="robot_name" default="iiwa"/>
-  
-  <!--  Define the origin of your 3D space
-  Here we define a box lying at 0,0,0 with some dimensions, in reality our robot is place on top of a metal cart with those dimensions.
-  This will include the cart in the scene and avoid the robot to hit it when using MoveIt! 
-  If you don't want to have that you can define a basic world link (see commented lines)
-  -->
-  
-  <!--     <link name="world"/> -->
-  
-  <!-- TODO: Adjust table surface dimensions-->
+
+  <!-- Table surface centered 5 cm below the origin in the z direction. -->
   <link name="world">
     <visual>
       <origin xyz="0 0 -0.05" rpy="0 0 0"/>
       <geometry>
-	<box size="2.5 2.5 0.099"/>
+    <!-- 9.9cm thick so it doesn't intersect with arm model. -->
+    <box size="2.5 2.5 0.099"/>
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 0 -0.05" rpy="0 0 0"/>
       <geometry>
-	<box size="2.5 2.5 0.099"/>
+    <box size="2.5 2.5 0.099"/>
       </geometry>
     </collision>
   </link>
@@ -42,24 +35,64 @@
     <static>true</static>
   </gazebo>
   
-  <!-- Here we insert an iiwa7 robot in the scene, it's origin is just on top of the box previously defined. You can use 0,0,0 if you don't have that. -->
+  <!-- Here we insert an iiwa7 robot in the scene, it's origin is just on top of the box previously defined.-->
   <xacro:iiwa7 hardware_interface="$(arg hardware_interface)" robot_name="$(arg robot_name)" parent="world">
-    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:iiwa7>
 
-  <!-- TODO -->
+  <!-- Instantiate the robotiq model from the imported macro. -->
   <xacro:robotiq-3f-gripper_articulated prefix="">
   </xacro:robotiq-3f-gripper_articulated>
   
-  <!-- robotiq properties -->
-  <xacro:property name="robotiq_mass" value="2.3" />
-  <xacro:property name="robotiq_joint_offset" value="0.00 0.00 0.097" />
-  
-  <!--  Here we define a dummy joint between the tip of the iiwa7 and the base of the robotiq. 
-  There is no offset between the two, that means the robotiq is attached at the robot flange. -->
+  <!-- Here we define a flange link between the tip of the iiwa7 and the base of the robotiq. -->
+  <!-- Insert a cylinder between default (smaller) flange and robotiq. -->
+  <link name="flange">
+    <visual>
+      <geometry>
+        <!-- Length and radius computed by SGD (Semi-stochastic GraduateStudent Descent). -->
+        <cylinder length="0.037" radius="0.035"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 .8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.037" radius="0.035"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Link at surface of palm for planning. -->
+  <link name="palm_surface"/>
+  <!-- Link near the center of the grasp region for planning. -->
+  <link name="finger_grasp_centroid"/>
+
+  <!-- The offset between iiwa_link_ee and palm was estimated to be 0.0975.
+       Sum of z origin displacements of ee_to_flange and robotiq_joint. -->
+  <joint name="ee_to_flange" type="fixed">
+    <parent link="iiwa_link_ee"/>
+    <child link="flange"/>
+    <origin xyz ="0.0 0.0 0.0225"/>
+  </joint>
+
   <joint name="robotiq_joint" type="fixed">
-    <parent link="iiwa_link_ee" />
+    <parent link="flange" />
     <child link = "palm" />
-    <origin xyz="${robotiq_joint_offset}" rpy="${PI/2.0} 0 ${PI/2.0}" />  
+    <origin xyz="0.0 0.0 0.075" rpy="${PI/2.0} 0 ${PI/2.0}" />  
+  </joint>
+
+  <joint name="palm_to_palm_surface" type="fixed">
+    <parent link="palm"/>
+    <child link="palm_surface"/>
+    <!-- Also estimated heuristically. -->
+    <origin xyz ="0.0 0.05 0.0"/>
+  </joint>
+
+  <joint name="palm_to_finger_grasp_centroid" type="fixed">
+    <parent link="palm"/>
+    <child link="finger_grasp_centroid"/>
+    <!-- Also estimated heuristically. -->
+    <origin xyz ="0.0 0.125 0.0"/>
   </joint>
 </robot> 
