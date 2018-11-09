@@ -1,6 +1,15 @@
 <launch>
 
-  <include file="$(find iiwa_robotiq_moveit_config)/launch/planning_context.launch" />
+  <arg name="hardware_interface" default="PositionJointInterface"/>
+  <arg name="robot_name" default="iiwa"/>
+  <arg name="model" default="iiwa7"/>
+
+  <include file="$(find iiwa_robotiq_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+    <arg name="hardware_interface" value="$(arg hardware_interface)"/>
+    <arg name="robot_name" value="$(arg robot_name)"/>
+    <arg name="model" value="$(arg model)"/>
+  </include>
 
   <!-- GDB Debug Option -->
   <arg name="debug" default="false" />
@@ -20,7 +29,6 @@
   <arg name="jiggle_fraction" default="0.05" />
   <arg name="publish_monitored_planning_scene" default="true"/>
 
-  <arg name="capabilities" default=""/>
   <arg name="disable_capabilities" default=""/>
   <!-- load these non-default MoveGroup capabilities (space seperated) -->
   <!--
@@ -63,7 +71,18 @@
     <param name="allow_trajectory_execution" value="$(arg allow_trajectory_execution)"/>
     <param name="max_safe_path_cost" value="$(arg max_safe_path_cost)"/>
     <param name="jiggle_fraction" value="$(arg jiggle_fraction)" />
-    <param name="capabilities" value="$(arg capabilities)"/>
+    <!-- MoveGroup capabilities to load -->
+    <param name="capabilities" value="move_group/MoveGroupCartesianPathService
+              move_group/MoveGroupExecuteService
+              move_group/MoveGroupKinematicsService
+              move_group/MoveGroupMoveAction
+              move_group/MoveGroupPickPlaceAction
+              move_group/MoveGroupPlanService
+              move_group/MoveGroupQueryPlannersService
+              move_group/MoveGroupStateValidationService
+              move_group/MoveGroupGetPlanningSceneService
+              move_group/ClearOctomapService
+              " />
     <param name="disable_capabilities" value="$(arg disable_capabilities)"/>
 
 

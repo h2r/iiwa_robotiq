@@ -8,6 +8,11 @@
   <!-- By default, we are not in debug mode -->
   <arg name="debug" default="false" />
 
+  <!-- hardware_interface to use : PositionJointInterface, EffortJointInterface, VelocityJointInterface. -->
+  <arg name="hardware_interface" default="PositionJointInterface"/>
+  <!-- Model of the iiwa to use : iiwa7, iiwa14 -->
+  <arg name="model" default="iiwa7"/>
+
   <!--
   By default, hide joint_state_publisher's GUI
 
