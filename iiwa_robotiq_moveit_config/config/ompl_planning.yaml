@@ -121,7 +121,7 @@ planner_configs:
     dense_delta_fraction: 0.001  # delta fraction for interface detection. default: 0.001
     max_failures: 5000  # maximum consecutive failure limit. default: 5000
 palm_surface:
-  default_planner_config: None
+  default_planner_config: RRTstar
   planner_configs:
     - SBL
     - EST
@@ -149,7 +149,7 @@ palm_surface:
   projection_evaluator: joints(iiwa_joint_1,iiwa_joint_2)
   longest_valid_segment_fraction: 0.005
 finger_grasp_centroid:
-  default_planner_config: None
+  default_planner_config: RRTstar
   planner_configs:
     - SBL
     - EST
