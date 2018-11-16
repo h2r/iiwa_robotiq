@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>iiwa_robotiq_state_publisher</name>
+  <name>iiwa_robotiq_bringup</name>
   <version>0.0.0</version>
-  <description>The iiwa_robotiq_state_publisher package</description>
+  <description>The iiwa_robotiq_bringup package</description>
 
   <maintainer email="abba@brown.edu">Ben A.</maintainer>
 

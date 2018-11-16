@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(iiwa_robotiq_state_publisher)
+project(iiwa_robotiq_bringup)
 
 find_package(catkin REQUIRED)
 

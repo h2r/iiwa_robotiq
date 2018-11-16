@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robot_name" default="iiwa" />
+    <arg name="rviz_moveit" default="false" />
+    
+    <node name="robotiq_3f_gripper_control" pkg="robotiq_3f_gripper_control" type="Robotiq3FGripperTcpNode.py" args="138.16.160.195"/>
+
+    <node name="robotiq_3f_gripper_joint_states" pkg="robotiq_3f_gripper_joint_state_publisher" type="robotiq_3f_gripper_joint_states">
+        <remap from="joint_states" to="/$(arg robot_name)/joint_states" />
+    </node>
+    
+    <!-- Converts joint states to TF transforms for rviz, etc -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+          respawn="false" output="screen">
+        <remap from="joint_states" to="/$(arg robot_name)/joint_states" />
+    </node>
+
+    <node name="hand_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+          respawn="false" output="screen">
+        <remap from="joint_states" to="/$(arg robot_name)/joint_states" />
+    </node>
+
+    <include file="$(find iiwa_robotiq_moveit_config)/launch/moveit_planning_execution.launch">
+      <arg name="sim" value="false"/>
+      <arg name="rviz" value="$(arg rviz_moveit)"/>
+    </include>
+    
+</launch>
