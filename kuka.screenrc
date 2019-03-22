@@ -46,4 +46,7 @@ stuff "roslaunch iiwa_robotiq_bringup iiwa7_robotiq_bringup.launch rviz_moveit:=
 screen -t " move to 0"
 stuff "rosrun iiwa_basic iiwa_basic_controller" # Don't run this until startup complete and arm enabled
 
+screen -t " gripper controller"
+stuff "rosrun robotiq_3f_gripper_control Robotiq3FGripperSimpleController.py" # Don't run this until startup complete and arm enabled
+
 screen -t " free"
