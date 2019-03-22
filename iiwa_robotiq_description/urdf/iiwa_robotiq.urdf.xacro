@@ -19,14 +19,14 @@
     <visual>
       <origin xyz="0 0 -0.05" rpy="0 0 0"/>
       <geometry>
-    <!-- 9.9cm thick so it doesn't intersect with arm model. -->
-    <box size="2.5 2.5 0.099"/>
+    <!-- 9.99cm thick so it doesn't intersect with arm model. -->
+    <box size="2.5 2.5 0.0999"/>
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 0 -0.05" rpy="0 0 0"/>
       <geometry>
-    <box size="2.5 2.5 0.099"/>
+    <box size="2.5 2.5 0.0999"/>
       </geometry>
     </collision>
   </link>
@@ -50,7 +50,7 @@
     <visual>
       <geometry>
         <!-- Length and radius computed by SGD (Semi-stochastic GraduateStudent Descent). -->
-        <cylinder length="0.037" radius="0.035"/>
+        <cylinder length="0.038" radius="0.035"/>
       </geometry>
       <material name="orange">
         <color rgba="1.0 0.27 0.0 1"/>
@@ -58,7 +58,7 @@
     </visual>
     <collision>
       <geometry>
-        <cylinder length="0.037" radius="0.035"/>
+        <cylinder length="0.038" radius="0.035"/>
       </geometry>
     </collision>
   </link>
