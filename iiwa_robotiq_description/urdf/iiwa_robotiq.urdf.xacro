@@ -2,14 +2,14 @@
 
 <!-- Here we define the robot, we named it "iiwa7_robotiq" -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="iiwa7_robotiq">
-  
+
   <!-- Import Rviz colors -->
   <xacro:include filename="$(find iiwa_description)/urdf/materials.xacro" />
   <!--Import the iiwa7 macro -->
   <xacro:include filename="$(find iiwa_description)/urdf/iiwa7.xacro"/>
   <!--Import the robotiq macro -->
   <xacro:include filename="$(find robotiq_3f_gripper_visualization)/cfg/robotiq-3f-gripper_articulated_macro.xacro"/>
-  
+
   <!--  Arguments for the iiwa7 macro  -->
   <xacro:arg name="hardware_interface" default="PositionJointInterface"/>
   <xacro:arg name="robot_name" default="iiwa"/>
@@ -30,11 +30,11 @@
       </geometry>
     </collision>
   </link>
-  
+
   <gazebo reference="world">
     <static>true</static>
   </gazebo>
-  
+
   <!-- Here we insert an iiwa7 robot in the scene, it's origin is just on top of the box previously defined.-->
   <xacro:iiwa7 hardware_interface="$(arg hardware_interface)" robot_name="$(arg robot_name)" parent="world">
     <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -43,7 +43,7 @@
   <!-- Instantiate the robotiq model from the imported macro. -->
   <xacro:robotiq-3f-gripper_articulated prefix="">
   </xacro:robotiq-3f-gripper_articulated>
-  
+
   <!-- Here we define a flange link between the tip of the iiwa7 and the base of the robotiq. -->
   <!-- Insert a cylinder between default (smaller) flange and robotiq. -->
   <link name="flange">
@@ -79,7 +79,9 @@
   <joint name="robotiq_joint" type="fixed">
     <parent link="flange" />
     <child link = "palm" />
-    <origin xyz="0.0 0.0 0.075" rpy="${PI/2.0} 0 ${PI/2.0}" />  
+    <!-- Gazebo isn't happy about ${PI/2.0}-->
+    <!--<origin xyz="0.0 0.0 0.075" rpy="${PI/2.0} 0 ${PI/2.0}" />-->
+    <origin xyz="0.0 0.0 0.075" rpy="1.57079632679 0 1.57079632679" />
   </joint>
 
   <joint name="palm_to_palm_surface" type="fixed">
