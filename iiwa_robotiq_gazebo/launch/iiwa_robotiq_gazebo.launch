@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- ===================================================================================== -->
+    <!-- |    Lauch file to start Gazebo with an IIWA using various controllers.	         | -->
+
+    <!-- |    It allows to customize the name of the robot, for each robot                   | -->
+    <!-- |	  its topics will be under a nameespace with the same name as the robot's.       | -->
+
+    <!-- |	  One can choose to have a joint trajectory controller or                        | -->
+    <!-- |    controllers for the single joints, using the "trajectory" argument.            | -->
+    <!-- ===================================================================================== -->
+
+    <arg name="hardware_interface" default="PositionJointInterface"/>
+    <arg name="robot_name" default="iiwa"/>
+    <arg name="model" default="iiwa7"/>
+    <arg name="trajectory" default="true"/>
+
+    <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find iiwa_gazebo)/worlds/iiwa.world"/>
+        <arg name="debug" value="false"/>
+        <arg name="gui" value="true"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="headless" value="false"/>
+    </include>
+
+    <!-- Load the URDF with the given hardware interface into the ROS Parameter Server -->
+    <include file="$(find iiwa_robotiq_description)/launch/iiwa7_robotiq_upload.launch">
+        <arg name="hardware_interface" value="$(arg hardware_interface)"/>
+        <arg name="robot_name" value="$(arg robot_name)"/>
+    </include>
+
+    <!-- iiwa-style spawn -->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model iiwa -param robot_description"/>
+
+    <!-- Spawn controllers - it uses a JointTrajectoryController -->
+    <group  ns="$(arg robot_name)" if="$(arg trajectory)">
+        <include file="$(find iiwa_control)/launch/iiwa_control.launch">
+            <arg name="hardware_interface" value="$(arg hardware_interface)"/>
+            <arg name="controllers" value="joint_state_controller $(arg hardware_interface)_trajectory_controller"/>
+            <arg name="robot_name" value="$(arg robot_name)"/>
+            <arg name="model" value="$(arg model)"/>
+        </include>
+    </group>
+
+    <!-- Spawn controllers - it uses an Effort Controller for each joint -->
+    <group ns="$(arg robot_name)" unless="$(arg trajectory)">
+        <include file="$(find iiwa_control)/launch/iiwa_control.launch">
+            <arg name="hardware_interface" value="$(arg hardware_interface)"/>
+            <arg name="controllers" value="joint_state_controller
+                $(arg hardware_interface)_J1_controller
+                $(arg hardware_interface)_J2_controller
+                $(arg hardware_interface)_J3_controller
+                $(arg hardware_interface)_J4_controller
+                $(arg hardware_interface)_J5_controller
+                $(arg hardware_interface)_J6_controller
+                $(arg hardware_interface)_J7_controller"/>
+            <arg name="robot_name" value="$(arg robot_name)"/>
+            <arg name="model" value="$(arg model)"/>
+        </include>
+    </group>
+
+    <!-- Start the publisher for the left hand (the only hand) -->
+    <node pkg="robot_state_publisher" type="state_publisher" name="robotiq_hands_l_hand_robot_state_publisher">
+        <param name="publish_frequency" type="double" value="50.0"/>
+        <remap from="joint_states" to="/robotiq_hands/left_hand/joint_states"/>
+    </node>
+    
+</launch>
