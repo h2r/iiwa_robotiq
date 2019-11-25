@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="robot_name" default="iiwa" />
+    <arg name="hand_ip" default="138.16.161.44" />
     <arg name="rviz_moveit" default="false" />
     
-    <node name="robotiq_3f_gripper_control" pkg="robotiq_3f_gripper_control" type="Robotiq3FGripperTcpNode.py" args="138.16.161.44"/>
+    <node name="robotiq_3f_gripper_control" pkg="robotiq_3f_gripper_control" type="Robotiq3FGripperTcpNode.py" args="$(arg hand_ip)"/>
 
     <node name="robotiq_3f_gripper_joint_states" pkg="robotiq_3f_gripper_joint_state_publisher" type="robotiq_3f_gripper_joint_states">
         <remap from="joint_states" to="/$(arg robot_name)/joint_states" />
