@@ -14,7 +14,8 @@
     <arg name="hardware_interface" default="PositionJointInterface"/>
     <arg name="robot_name" default="iiwa"/>
     <arg name="model" default="iiwa7"/>
-    <arg name="trajectory" default="true"/>
+    <arg name="trajectory" default="false"/>
+    <arg name="individual_state_control" default="false"/>
 
     <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -35,7 +36,7 @@
     <!-- iiwa-style spawn -->
     <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model iiwa -param robot_description"/>
 
-    <!-- Spawn controllers - it uses a JointTrajectoryController -->
+    <!-- Spawn controllers - if it uses a JointTrajectoryController -->
     <group  ns="$(arg robot_name)" if="$(arg trajectory)">
         <include file="$(find iiwa_control)/launch/iiwa_control.launch">
             <arg name="hardware_interface" value="$(arg hardware_interface)"/>
@@ -45,11 +46,13 @@
         </include>
     </group>
 
-    <!-- Spawn controllers - it uses an Effort Controller for each joint -->
+    <!-- Spawn controllers - if it uses an Effort Controller for each joint -->
     <group ns="$(arg robot_name)" unless="$(arg trajectory)">
+        <!-- Loads additional joint controller configurations from YAML file to parameter server -->
+        <rosparam file="$(find iiwa_robotiq_gazebo)/config/joint_group_position_controller.yaml" command="load" />
         <include file="$(find iiwa_control)/launch/iiwa_control.launch">
             <arg name="hardware_interface" value="$(arg hardware_interface)"/>
-            <arg name="controllers" value="joint_state_controller
+            <arg name="controllers" if="$(arg individual_state_control)" value="joint_state_controller
                 $(arg hardware_interface)_J1_controller
                 $(arg hardware_interface)_J2_controller
                 $(arg hardware_interface)_J3_controller
@@ -57,15 +60,17 @@
                 $(arg hardware_interface)_J5_controller
                 $(arg hardware_interface)_J6_controller
                 $(arg hardware_interface)_J7_controller"/>
+            <arg name="controllers" unless="$(arg individual_state_control)" value="joint_state_controller
+                PositionJointInterface_state_controller"/>
             <arg name="robot_name" value="$(arg robot_name)"/>
             <arg name="model" value="$(arg model)"/>
         </include>
     </group>
 
     <!-- Start the publisher for the left hand (the only hand) -->
-    <node pkg="robot_state_publisher" type="state_publisher" name="robotiq_hands_l_hand_robot_state_publisher">
+    <!-- <node pkg="robot_state_publisher" type="state_publisher" name="robotiq_hands_l_hand_robot_state_publisher">
         <param name="publish_frequency" type="double" value="50.0"/>
         <remap from="joint_states" to="/robotiq_hands/left_hand/joint_states"/>
-    </node>
+    </node> -->
     
 </launch>
