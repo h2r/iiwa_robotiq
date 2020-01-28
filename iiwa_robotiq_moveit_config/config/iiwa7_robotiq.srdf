@@ -15,6 +15,9 @@
     <group name="finger_grasp_centroid">
         <chain base_link="iiwa_link_0" tip_link="finger_grasp_centroid" />
     </group>
+    <group name="palm_link">
+        <chain base_link="iiwa_link_0" tip_link="palm" />
+    </group>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_1" reason="Adjacent" />
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_2" reason="Never" />
