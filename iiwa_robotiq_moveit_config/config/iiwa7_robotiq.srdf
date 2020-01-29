@@ -19,6 +19,12 @@
         <chain base_link="iiwa_link_0" tip_link="palm" />
     </group>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="finger_1_link_3" link2="finger_2_link_3" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_1_link_3" link2="finger_middle_link_3" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_1_link_3" link2="palm" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_2_link_3" link2="finger_middle_link_3" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_2_link_3" link2="palm" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_middle_link_3" link2="palm" reason="Motion planning fails when gripper closed" />
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_1" reason="Adjacent" />
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_2" reason="Never" />
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_3" reason="Never" />
