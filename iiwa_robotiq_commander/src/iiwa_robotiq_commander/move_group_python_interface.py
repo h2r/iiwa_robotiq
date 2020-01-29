@@ -92,22 +92,22 @@ class MoveGroupPythonInterface(object):
 
     ## Instantiate a `RobotCommander`_ object. This object is the outer-level interface to
     ## the robot:
-    robot = moveit_commander.RobotCommander()
+    self.robot = moveit_commander.RobotCommander()
 
     ## Instantiate a `PlanningSceneInterface`_ object.  This object is an interface
     ## to the world surrounding the robot:
-    scene = moveit_commander.PlanningSceneInterface()
+    self.scene = moveit_commander.PlanningSceneInterface()
 
     ## Instantiate a `MoveGroupCommander`_ object.  This object is an interface
     ## to one group of joints. If you are using a different robot,
     ## you should change this value to the name of your robot arm planning group.
     ## This interface can be used to plan and execute motions on the robot:
 
-    group_names = robot.get_group_names()
-    if move_group_name not in group_names:
-        rospy.ROSException("Given movegroup name {} not in list of valid groups: {}".format(move_group_name, group_names))
+    self.group_names = self.robot.get_group_names()
+    if move_group_name not in self.group_names:
+        rospy.ROSException("Given movegroup name {} not in list of valid groups: {}".format(move_group_name, self.group_names))
 
-    group = moveit_commander.MoveGroupCommander(move_group_name)
+    self.group = moveit_commander.MoveGroupCommander(move_group_name)
 
     ## We create a `DisplayTrajectory`_ publisher which is used later to publish
     ## trajectories for RViz to visualize:
@@ -115,29 +115,15 @@ class MoveGroupPythonInterface(object):
                                                    moveit_msgs.msg.DisplayTrajectory,
                                                    queue_size=20)
 
-    # We can get the name of the reference frame for this robot:
-    planning_frame = group.get_planning_frame()
-    print "============ Reference frame: %s" % planning_frame
+    self.planning_frame = self.group.get_planning_frame()
+    self.eef_link = self.group.get_end_effector_link()
 
-    # We can also print the name of the end-effector link for this group:
-    eef_link = group.get_end_effector_link()
-    print "============ End effector: %s" % eef_link
-
+  def print_robot_state(self):
     # Sometimes for debugging it is useful to print the entire state of the
     # robot:
     print "============ Printing robot state"
-    print robot.get_current_state()
+    print self.robot.get_current_state()
     print ""
-
-    # Misc variables
-    self.box_name = ''
-    self.robot = robot
-    self.scene = scene
-    self.group = group
-    self.display_trajectory_publisher = display_trajectory_publisher
-    self.planning_frame = planning_frame
-    self.eef_link = eef_link
-    self.group_names = group_names
 
   ## args: goal_joints - list of joint values for each of the robot's joints
   def go_to_joint_state(self, goal_joints):
@@ -147,12 +133,16 @@ class MoveGroupPythonInterface(object):
     if num_goal_joints != num_robot_joints:
         rospy.ROSException("Gave a joint command with {} joint values, expected {} joint values.".format(num_goal_joints, num_robot_joints))
 
+    print "now going to commanded joint state"
     # The go command can be called with joint values, poses, or without any
     # parameters if you have already set the pose or joint target for the group
     self.group.go(goal_joints, wait=True)
+    print "at commanded joint state"
+    rospy.sleep(1.)
 
     # Calling ``stop()`` ensures that there is no residual movement
     self.group.stop()
+    rospy.sleep(1.)
 
     current_joints = self.group.get_current_joint_values()
     return all_close(goal_joints, current_joints, 0.01)
@@ -176,7 +166,7 @@ class MoveGroupPythonInterface(object):
     pose_goal.orientation.w = pose_goal_quat[3]
     self.group.set_pose_target(pose_goal)
 
-    # TODO(mcorsaro): group.go vs. group.plan and execute
+    # TODO(mcorsaro): group.go vs. group.plan and group.execute
     # TODO(mcorsaro): add option to first display planned trajectory and wait for raw input before executing
     # TODO(mcorsaro): will this move close to unreachable goals or fail somewhere?
     # TODO(mcorsaro): same TODOs for other functions
@@ -246,24 +236,15 @@ class MoveGroupPythonInterface(object):
     self.display_trajectory_publisher.publish(display_trajectory);
 
   def execute_plan(self, plan):
-    # Copy class variables to local variables to make the web tutorials more clear.
-    # In practice, you should use the class variables directly unless you have a good
-    # reason not to.
-    group = self.group
-
-    ## BEGIN_SUB_TUTORIAL execute_plan
-    ##
     ## Executing a Plan
     ## ^^^^^^^^^^^^^^^^
     ## Use execute if you would like the robot to follow
     ## the plan that has already been computed:
-    group.execute(plan, wait=True)
-
-    ## **Note:** The robot's current joint state must be within some tolerance of the
-    ## first waypoint in the `RobotTrajectory`_ or ``execute()`` will fail
-    ## END_SUB_TUTORIAL
+    self.group.execute(plan, wait=True)
 
 def examples():
+    # Note: rosrunning this file won't work - it has to be run in the iiwa namespace. See other examples that import this file
+    # TODO(mcorsaro): remove these, make dedicated example
     move_group_interface = MoveGroupPythonInterface()
 
     goal_joints = [0]*7
