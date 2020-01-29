@@ -88,8 +88,7 @@ class MoveGroupPythonInterface(object):
 
     ## First initialize `moveit_commander`_ and a `rospy`_ node:
     moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_group_python_interface',
-                    anonymous=True)
+    #rospy.init_node('move_group_python_interface', anonymous=True)
 
     ## Instantiate a `RobotCommander`_ object. This object is the outer-level interface to
     ## the robot:
@@ -112,7 +111,7 @@ class MoveGroupPythonInterface(object):
 
     ## We create a `DisplayTrajectory`_ publisher which is used later to publish
     ## trajectories for RViz to visualize:
-    display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
+    display_trajectory_publisher = rospy.Publisher('move_group/display_planned_path',
                                                    moveit_msgs.msg.DisplayTrajectory,
                                                    queue_size=20)
 
@@ -268,11 +267,11 @@ def examples():
     move_group_interface = MoveGroupPythonInterface()
 
     goal_joints = [0]*7
-    tutorial.go_to_joint_state(goal_joints)
+    move_group_interface.go_to_joint_state(goal_joints)
     goal_joints[1] = math.pi/2
-    tutorial.go_to_joint_state(goal_joints)
+    move_group_interface.go_to_joint_state(goal_joints)
 
-    #tutorial.go_to_pose_goal()
+    #move_group_interface.go_to_pose_goal()
 
     '''
     print "============ Press `Enter` to plan and display a Cartesian path ..."
