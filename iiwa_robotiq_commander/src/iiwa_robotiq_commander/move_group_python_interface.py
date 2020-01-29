@@ -111,7 +111,7 @@ class MoveGroupPythonInterface(object):
 
     ## We create a `DisplayTrajectory`_ publisher which is used later to publish
     ## trajectories for RViz to visualize:
-    display_trajectory_publisher = rospy.Publisher('move_group/display_planned_path',
+    self.display_trajectory_publisher = rospy.Publisher('move_group/display_planned_path',
                                                    moveit_msgs.msg.DisplayTrajectory,
                                                    queue_size=20)
 
@@ -133,16 +133,12 @@ class MoveGroupPythonInterface(object):
     if num_goal_joints != num_robot_joints:
         rospy.ROSException("Gave a joint command with {} joint values, expected {} joint values.".format(num_goal_joints, num_robot_joints))
 
-    print "now going to commanded joint state"
     # The go command can be called with joint values, poses, or without any
     # parameters if you have already set the pose or joint target for the group
     self.group.go(goal_joints, wait=True)
-    print "at commanded joint state"
-    rospy.sleep(1.)
 
     # Calling ``stop()`` ensures that there is no residual movement
     self.group.stop()
-    rospy.sleep(1.)
 
     current_joints = self.group.get_current_joint_values()
     return all_close(goal_joints, current_joints, 0.01)
