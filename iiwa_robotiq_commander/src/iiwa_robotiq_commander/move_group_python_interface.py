@@ -45,6 +45,8 @@
 ## We also import `rospy`_ and some messages that we will use:
 ##
 
+# TODO(mcorsaro): remove tutorial comments, 4 spaces
+
 import sys
 import copy
 import rospy
@@ -133,7 +135,7 @@ class MoveGroupPythonInterface(object):
     print ""
 
   ## args: goal_joints - list of joint values for each of the robot's joints
-  def go_to_joint_state(self, goal_joints, wait_for_input=False):
+  def go_to_joint_state(self, goal_joints, wait_for_input=True, execute_plan=True):
 
     num_goal_joints = len(goal_joints)
     num_robot_joints = len(self.group.get_current_joint_values())
@@ -142,7 +144,8 @@ class MoveGroupPythonInterface(object):
 
     plan = self.group.plan(goal_joints)
 
-    self.execute_plan(plan, wait_for_input)
+    if execute_plan:
+      self.execute_plan(plan, wait_for_input)
 
     current_joints = self.group.get_current_joint_values()
     return all_close(goal_joints, current_joints, 0.01)
@@ -150,7 +153,7 @@ class MoveGroupPythonInterface(object):
   ## args: pose_goal_position - [x, y, z] ee desired position
   ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
   ##                        quaternion representing desired ee orientation
-  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, wait_for_input=False):
+  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, wait_for_input=True, execute_plan=True):
     if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
         rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
 
@@ -167,7 +170,8 @@ class MoveGroupPythonInterface(object):
 
     plan = self.group.plan(pose_goal)
 
-    self.execute_plan(plan, wait_for_input)
+    if execute_plan:
+      self.execute_plan(plan, wait_for_input)
 
     return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
 
@@ -177,10 +181,13 @@ class MoveGroupPythonInterface(object):
       if not(user_response.lower() == "y" or user_response.lower() == "yes"):
         print "NOT EXECUTING THE GIVEN MOTION PLAN."
         self.clear_robot_targets()
+        return False
 
     self.group.execute(plan, wait=True)
+    rospy.sleep(4)
 
     self.clear_robot_targets()
+    return True
 
 def examples():
     print "Note: when using this class, you must run your scripts in the iiwa namespace."
