@@ -118,6 +118,13 @@ class MoveGroupPythonInterface(object):
     self.planning_frame = self.group.get_planning_frame()
     self.eef_link = self.group.get_end_effector_link()
 
+  def clear_robot_targets(self):
+    # Calling `stop()` ensures that there is no residual movement
+    self.group.stop()
+    # It is always good to clear your targets after planning with poses.
+    # Note: there is no equivalent function for clear_joint_value_targets()
+    self.group.clear_pose_targets()
+
   def print_robot_state(self):
     # Sometimes for debugging it is useful to print the entire state of the
     # robot:
@@ -126,19 +133,16 @@ class MoveGroupPythonInterface(object):
     print ""
 
   ## args: goal_joints - list of joint values for each of the robot's joints
-  def go_to_joint_state(self, goal_joints):
+  def go_to_joint_state(self, goal_joints, wait_for_input=False):
 
     num_goal_joints = len(goal_joints)
     num_robot_joints = len(self.group.get_current_joint_values())
     if num_goal_joints != num_robot_joints:
-        rospy.ROSException("Gave a joint command with {} joint values, expected {} joint values.".format(num_goal_joints, num_robot_joints))
+      rospy.ROSException("Gave a joint command with {} joint values, expected {} joint values.".format(num_goal_joints, num_robot_joints))
 
-    # The go command can be called with joint values, poses, or without any
-    # parameters if you have already set the pose or joint target for the group
-    self.group.go(goal_joints, wait=True)
+    plan = self.group.plan(goal_joints)
 
-    # Calling ``stop()`` ensures that there is no residual movement
-    self.group.stop()
+    self.execute_plan(plan, wait_for_input)
 
     current_joints = self.group.get_current_joint_values()
     return all_close(goal_joints, current_joints, 0.01)
@@ -146,7 +150,7 @@ class MoveGroupPythonInterface(object):
   ## args: pose_goal_position - [x, y, z] ee desired position
   ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
   ##                        quaternion representing desired ee orientation
-  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat):
+  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, wait_for_input=False):
     if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
         rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
 
@@ -160,23 +164,30 @@ class MoveGroupPythonInterface(object):
     pose_goal.orientation.y = pose_goal_quat[1]
     pose_goal.orientation.z = pose_goal_quat[2]
     pose_goal.orientation.w = pose_goal_quat[3]
-    self.group.set_pose_target(pose_goal)
 
-    # TODO(mcorsaro): group.go vs. group.plan and group.execute
-    # TODO(mcorsaro): add option to first display planned trajectory and wait for raw input before executing
-    # TODO(mcorsaro): will this move close to unreachable goals or fail somewhere?
-    # TODO(mcorsaro): same TODOs for other functions
+    plan = self.group.plan(pose_goal)
 
-    ## Now, we call the planner to compute the plan and execute it.
-    plan = self.group.go(wait=True)
-    # Calling `stop()` ensures that there is no residual movement
-    self.group.stop()
-    # It is always good to clear your targets after planning with poses.
-    # Note: there is no equivalent function for clear_joint_value_targets()
-    self.group.clear_pose_targets()
+    self.execute_plan(plan, wait_for_input)
 
-    current_pose = self.group.get_current_pose().pose
-    return all_close(pose_goal, current_pose, 0.01)
+    return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
+
+  def execute_plan(self, plan, wait_for_input):
+    if wait_for_input:
+      user_response = raw_input("Execute this motion plan?\n")
+      if not(user_response.lower() == "y" or user_response.lower() == "yes"):
+        print "NOT EXECUTING THE GIVEN MOTION PLAN."
+        self.clear_robot_targets()
+
+    self.group.execute(plan, wait=True)
+
+    self.clear_robot_targets()
+
+def examples():
+    print "Note: when using this class, you must run your scripts in the iiwa namespace."
+    print "See other examples"
+
+if __name__ == '__main__':
+  examples()
 
   # TODO(mcorsaro): turn this Cartesian path tutorial into a function or remove
   '''
@@ -213,56 +224,20 @@ class MoveGroupPythonInterface(object):
     return plan, fraction
 
     ## END_SUB_TUTORIAL
+
+    def display_trajectory(self, plan):
+      ## Displaying a Trajectory
+      ## ^^^^^^^^^^^^^^^^^^^^^^^
+      ## You can ask RViz to visualize a plan (aka trajectory) for you. But the
+      ## group.plan() method does this automatically so this is not that useful
+      ## here (it just displays the same trajectory again):
+      ##
+      ## A `DisplayTrajectory`_ msg has two primary fields, trajectory_start and trajectory.
+      ## We populate the trajectory_start with our current robot state to copy over
+      ## any AttachedCollisionObjects and add our plan to the trajectory.
+      display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+      display_trajectory.trajectory_start = self.robot.get_current_state()
+      display_trajectory.trajectory.append(plan)
+      # Publish
+      self.display_trajectory_publisher.publish(display_trajectory);
     '''
-
-  def display_trajectory(self, plan):
-    ## Displaying a Trajectory
-    ## ^^^^^^^^^^^^^^^^^^^^^^^
-    ## You can ask RViz to visualize a plan (aka trajectory) for you. But the
-    ## group.plan() method does this automatically so this is not that useful
-    ## here (it just displays the same trajectory again):
-    ##
-    ## A `DisplayTrajectory`_ msg has two primary fields, trajectory_start and trajectory.
-    ## We populate the trajectory_start with our current robot state to copy over
-    ## any AttachedCollisionObjects and add our plan to the trajectory.
-    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-    display_trajectory.trajectory_start = self.robot.get_current_state()
-    display_trajectory.trajectory.append(plan)
-    # Publish
-    self.display_trajectory_publisher.publish(display_trajectory);
-
-  def execute_plan(self, plan):
-    ## Executing a Plan
-    ## ^^^^^^^^^^^^^^^^
-    ## Use execute if you would like the robot to follow
-    ## the plan that has already been computed:
-    self.group.execute(plan, wait=True)
-
-def examples():
-    # Note: rosrunning this file won't work - it has to be run in the iiwa namespace. See other examples that import this file
-    # TODO(mcorsaro): remove these, make dedicated example
-    move_group_interface = MoveGroupPythonInterface()
-
-    goal_joints = [0]*7
-    move_group_interface.go_to_joint_state(goal_joints)
-    goal_joints[1] = math.pi/2
-    move_group_interface.go_to_joint_state(goal_joints)
-
-    #move_group_interface.go_to_pose_goal()
-
-    '''
-    print "============ Press `Enter` to plan and display a Cartesian path ..."
-    raw_input()
-    cartesian_plan, fraction = tutorial.plan_cartesian_path()
-
-    print "============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ..."
-    raw_input()
-    tutorial.display_trajectory(cartesian_plan)
-
-    print "============ Press `Enter` to execute a saved path ..."
-    raw_input()
-    tutorial.execute_plan(cartesian_plan)
-    '''
-
-if __name__ == '__main__':
-  examples()
