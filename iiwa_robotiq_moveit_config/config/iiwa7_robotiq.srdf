@@ -24,6 +24,22 @@
     <disable_collisions link1="finger_1_link_3" link2="palm" reason="Motion planning fails when gripper closed" />
     <disable_collisions link1="finger_2_link_3" link2="finger_middle_link_3" reason="Motion planning fails when gripper closed" />
     <disable_collisions link1="finger_2_link_3" link2="palm" reason="Motion planning fails when gripper closed" />
+
+    <disable_collisions link1="finger_1_link_3" link2="finger_2_link_2" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_1_link_3" link2="finger_middle_link_2" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_2_link_3" link2="finger_1_link_2" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_2_link_3" link2="finger_middle_link_2" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_middle_link_3" link2="finger_1_link_2" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_middle_link_3" link2="finger_2_link_2" reason="Motion planning fails when gripper closed" />
+
+    <disable_collisions link1="finger_1_link_1" link2="palm" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_2_link_1" link2="palm" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_middle_link_1" link2="palm" reason="Motion planning fails when gripper closed" />
+
+    <disable_collisions link1="finger_1_link_2" link2="finger_2_link_2" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_1_link_2" link2="finger_middle_link_2" reason="Motion planning fails when gripper closed" />
+    <disable_collisions link1="finger_middle_link_2" link2="finger_2_link_2" reason="Motion planning fails when gripper closed" />
+
     <disable_collisions link1="finger_middle_link_3" link2="palm" reason="Motion planning fails when gripper closed" />
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_1" reason="Adjacent" />
     <disable_collisions link1="finger_1_link_0" link2="finger_1_link_2" reason="Never" />
