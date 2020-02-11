@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="robot_name" default="iiwa"/>
+
+    <!-- IMPORTANT: namespace="$(arg robot_name)" -->
+    <node pkg="iiwa_robotiq_commander" name="demo" type="demo.py" output="screen" ns="$(arg robot_name)"/>
+
+</launch>
