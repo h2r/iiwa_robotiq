@@ -44,6 +44,12 @@ if __name__ == '__main__':
     move_group_interface = moveit_interface.MoveGroupPythonInterface("finger_grasp_centroid")
     hand_interface = robotiq_commander.RobotiqInterface()
     
+    # straight up
+    pos = [0.75, 0.246, 0.598]
+    #ori = [0.5, 0.5, 0.5, 0.5]
+    ori = [0.0, -0.7071, -0.7071, 0.0]
+    move_group_interface.go_to_pose_goal(pos, ori)
+    '''
     # Point arm straight up, activate the hand
     move_group_interface.go_to_joint_state(home_joints)
     hand_interface.activate()
@@ -64,3 +70,4 @@ if __name__ == '__main__':
     #hand_interface.wide_mode()
 
     #hardcoded_grasp(pring_pre, pring_pos, pring_ori)
+    '''
