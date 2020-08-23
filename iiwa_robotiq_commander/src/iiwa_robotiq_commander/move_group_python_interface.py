@@ -134,26 +134,16 @@ class MoveGroupPythonInterface(object):
     print self.robot.get_current_state()
     print ""
 
-  ## args: goal_joints - list of joint values for each of the robot's joints
-  def go_to_joint_state(self, goal_joints, wait_for_input=True, execute_plan=True):
-
+  def get_plan_to_joint_state(self, goal_joints):
     num_goal_joints = len(goal_joints)
     num_robot_joints = len(self.group.get_current_joint_values())
     if num_goal_joints != num_robot_joints:
       rospy.ROSException("Gave a joint command with {} joint values, expected {} joint values.".format(num_goal_joints, num_robot_joints))
 
     plan = self.group.plan(goal_joints)
+    return plan
 
-    if execute_plan:
-      self.execute_plan(plan, wait_for_input)
-
-    current_joints = self.group.get_current_joint_values()
-    return all_close(goal_joints, current_joints, 0.01)
-
-  ## args: pose_goal_position - [x, y, z] ee desired position
-  ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
-  ##                        quaternion representing desired ee orientation
-  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, wait_for_input=True, execute_plan=True):
+  def get_plan_to_pose_goal(self, pose_goal_position, pose_goal_quat):
     if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
         rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
 
@@ -169,6 +159,23 @@ class MoveGroupPythonInterface(object):
     pose_goal.orientation.w = pose_goal_quat[3]
 
     plan = self.group.plan(pose_goal)
+    return plan
+
+  ## args: goal_joints - list of joint values for each of the robot's joints
+  def go_to_joint_state(self, goal_joints, wait_for_input=True, execute_plan=True):
+    plan = self.get_plan_to_joint_state(goal_joints)
+
+    if execute_plan:
+      self.execute_plan(plan, wait_for_input)
+
+    current_joints = self.group.get_current_joint_values()
+    return all_close(goal_joints, current_joints, 0.01)
+
+  ## args: pose_goal_position - [x, y, z] ee desired position
+  ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
+  ##                        quaternion representing desired ee orientation
+  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, wait_for_input=True, execute_plan=True):
+    plan = self.get_plan_to_pose_goal(pose_goal_position, pose_goal_quat)
 
     if execute_plan:
       self.execute_plan(plan, wait_for_input)
