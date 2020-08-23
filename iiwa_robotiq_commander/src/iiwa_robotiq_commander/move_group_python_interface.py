@@ -135,29 +135,34 @@ class MoveGroupPythonInterface(object):
     print ""
 
   def get_plan_to_joint_state(self, goal_joints):
+
     num_goal_joints = len(goal_joints)
     num_robot_joints = len(self.group.get_current_joint_values())
     if num_goal_joints != num_robot_joints:
       rospy.ROSException("Gave a joint command with {} joint values, expected {} joint values.".format(num_goal_joints, num_robot_joints))
 
+    self.group.set_start_state(self.robot.get_current_state())
     plan = self.group.plan(goal_joints)
     return plan
 
-  def get_plan_to_pose_goal(self, pose_goal_position, pose_goal_quat):
-    if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
+  # Provide either pose_goal_position and pose_goal_quat lists or pose_goal pose msg
+  def get_plan_to_pose_goal(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None):
+    if (pose_goal_position != None and pose_goal_quat != None and pose_goal == None):
+      if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
         rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
 
-    ## We can plan a motion for this group to a desired pose for the
-    ## end-effector:
-    pose_goal = geometry_msgs.msg.Pose()
-    pose_goal.position.x = pose_goal_position[0]
-    pose_goal.position.y = pose_goal_position[1]
-    pose_goal.position.z = pose_goal_position[2]
-    pose_goal.orientation.x = pose_goal_quat[0]
-    pose_goal.orientation.y = pose_goal_quat[1]
-    pose_goal.orientation.z = pose_goal_quat[2]
-    pose_goal.orientation.w = pose_goal_quat[3]
+      ## We can plan a motion for this group to a desired pose for the
+      ## end-effector:
+      pose_goal = geometry_msgs.msg.Pose()
+      pose_goal.position.x = pose_goal_position[0]
+      pose_goal.position.y = pose_goal_position[1]
+      pose_goal.position.z = pose_goal_position[2]
+      pose_goal.orientation.x = pose_goal_quat[0]
+      pose_goal.orientation.y = pose_goal_quat[1]
+      pose_goal.orientation.z = pose_goal_quat[2]
+      pose_goal.orientation.w = pose_goal_quat[3]
 
+    self.group.set_start_state(self.robot.get_current_state())
     plan = self.group.plan(pose_goal)
     return plan
 
@@ -175,14 +180,28 @@ class MoveGroupPythonInterface(object):
   ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
   ##                        quaternion representing desired ee orientation
   def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, wait_for_input=True, execute_plan=True):
-    plan = self.get_plan_to_pose_goal(pose_goal_position, pose_goal_quat)
+    if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
+        rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
+
+    ## We can plan a motion for this group to a desired pose for the
+    ## end-effector:
+    pose_goal = geometry_msgs.msg.Pose()
+    pose_goal.position.x = pose_goal_position[0]
+    pose_goal.position.y = pose_goal_position[1]
+    pose_goal.position.z = pose_goal_position[2]
+    pose_goal.orientation.x = pose_goal_quat[0]
+    pose_goal.orientation.y = pose_goal_quat[1]
+    pose_goal.orientation.z = pose_goal_quat[2]
+    pose_goal.orientation.w = pose_goal_quat[3]
+
+    plan = self.get_plan_to_pose_goal(pose_goal=pose_goal)
 
     if execute_plan:
       self.execute_plan(plan, wait_for_input)
 
     return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
 
-  def execute_plan(self, plan, wait_for_input):
+  def execute_plan(self, plan, wait_for_input=True):
     if wait_for_input:
       user_response = raw_input("Execute this motion plan?\n")
       if not(user_response.lower() == "y" or user_response.lower() == "yes"):
