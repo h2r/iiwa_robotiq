@@ -44,6 +44,7 @@ if __name__ == '__main__':
     move_group_interface = moveit_interface.MoveGroupPythonInterface("finger_grasp_centroid")
     hand_interface = robotiq_commander.RobotiqInterface()
     
+    # As defined in move_group_python_interface.py, quaternions should be in xyzw order
     # straight up
     pos = [0.75, 0.246, 0.598]
     #ori = [0.5, 0.5, 0.5, 0.5]
