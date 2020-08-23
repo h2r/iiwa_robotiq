@@ -149,7 +149,7 @@ class MoveGroupPythonInterface(object):
     return plan
 
   # Provide either pose_goal_position and pose_goal_quat lists or pose_goal pose msg
-  def get_plan_to_pose_goal(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None):
+  def get_plan_to_pose_goal(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None):
     if (pose_goal_position != None and pose_goal_quat != None and pose_goal == None):
       if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
         raise rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
@@ -165,8 +165,10 @@ class MoveGroupPythonInterface(object):
       pose_goal.orientation.z = pose_goal_quat[2]
       pose_goal.orientation.w = pose_goal_quat[3]
 
-    print "Planning from", self.robot.get_current_state()
-    self.group.set_start_state(self.robot.get_current_state())
+    if start_state == None:
+      self.group.set_start_state(self.robot.get_current_state())
+    else:
+      self.group.set_start_state(start_state)
     plan = self.group.plan(pose_goal)
     return plan
 
