@@ -173,11 +173,11 @@ class MoveGroupPythonInterface(object):
     return plan
 
   ## args: goal_joints - list of joint values for each of the robot's joints
-  def go_to_joint_state(self, goal_joints, wait_for_input=True, execute_plan=True):
+  def go_to_joint_state(self, goal_joints, delay=4, wait_for_input=True, execute_plan=True):
     plan = self.get_plan_to_joint_state(goal_joints)
 
     if execute_plan:
-      self.execute_plan(plan, wait_for_input)
+      self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
     current_joints = self.group.get_current_joint_values()
     return all_close(goal_joints, current_joints, 0.01)
@@ -185,7 +185,7 @@ class MoveGroupPythonInterface(object):
   ## args: pose_goal_position - [x, y, z] ee desired position
   ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
   ##                        quaternion representing desired ee orientation
-  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, wait_for_input=True, execute_plan=True):
+  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, delay=4, wait_for_input=True, execute_plan=True):
     if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
         raise rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
 
@@ -203,11 +203,11 @@ class MoveGroupPythonInterface(object):
     plan = self.get_plan_to_pose_goal(pose_goal=pose_goal)
 
     if execute_plan:
-      self.execute_plan(plan, wait_for_input)
+      self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
     return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
 
-  def execute_plan(self, plan, wait_for_input=True):
+  def execute_plan(self, plan, delay=4, wait_for_input=True):
     if wait_for_input:
       user_response = raw_input("Execute this motion plan?\n")
       if not(user_response.lower() == "y" or user_response.lower() == "yes"):
@@ -216,7 +216,7 @@ class MoveGroupPythonInterface(object):
         return False
 
     self.group.execute(plan, wait=True)
-    rospy.sleep(4)
+    rospy.sleep(delay)
 
     self.clear_robot_targets()
     return True
