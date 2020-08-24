@@ -63,6 +63,24 @@
     </collision>
   </link>
 
+  <!-- Structure sensor model -->
+  <link name="structure_sensor_model">
+    <visual>
+      <geometry>
+        <!-- 5" wide, 1" other two dimensions. Surface (x) is at origin -->
+        <box size="0.0254 0.127 0.0254"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="1.0 0.27 0.0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.0254 0.127 0.0254"/>
+      </geometry>
+    </collision>
+  </link>
+
   <!-- Link at surface of palm for planning. -->
   <link name="palm_surface"/>
   <!-- Link near the center of the grasp region for planning. -->
@@ -83,6 +101,13 @@
     <parent link="iiwa_link_ee"/>
     <child link="camera_link"/>
     <origin xyz ="0.04 -0.08 0.03" rpy="0 0 -1.5707963"/>
+  </joint>
+
+  <joint name="structure_to_sensor_model" type="fixed">
+    <parent link="camera_link"/>
+    <child link="structure_sensor_model"/>
+    <!-- x offset half x dim so it's at surface, y to center it-->
+    <origin xyz="-0.0127 -0.04 0" rpy="0 0 0"/>
   </joint>
 
   <joint name="robotiq_joint" type="fixed">
