@@ -68,12 +68,21 @@
   <!-- Link near the center of the grasp region for planning. -->
   <link name="finger_grasp_centroid"/>
 
+  <!-- Link for structure sensor with OpenNI2-->
+  <link name="camera_link"/>
+
   <!-- The offset between iiwa_link_ee and palm was estimated to be 0.0975.
        Sum of z origin displacements of ee_to_flange and robotiq_joint. -->
   <joint name="ee_to_flange" type="fixed">
     <parent link="iiwa_link_ee"/>
     <child link="flange"/>
     <origin xyz ="0.0 0.0 0.0225"/>
+  </joint>
+
+  <joint name="ee_to_structure" type="fixed">
+    <parent link="iiwa_link_ee"/>
+    <child link="camera_link"/>
+    <origin xyz ="0.04 -0.08 0.03" rpy="0 0 -1.5707963"/>
   </joint>
 
   <joint name="robotiq_joint" type="fixed">
