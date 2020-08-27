@@ -209,8 +209,12 @@ class MoveGroupPythonInterface(object):
 
   def execute_plan(self, plan, delay=4, wait_for_input=True):
     if wait_for_input:
-      user_response = raw_input("Execute this motion plan?\n")
-      if not(user_response.lower() == "y" or user_response.lower() == "yes"):
+      user_response = raw_input("Execute this motion plan? (y/n)\n")
+      while user_response != "y" and user_response != "n" and user_response != "q":
+        user_response = raw_input("Execute this motion plan? (y/n)\n")
+      if user_response == "q":
+        sys.exit("USER REQUESTED EXIT.")
+      if user_response == "n":
         print "NOT EXECUTING THE GIVEN MOTION PLAN."
         self.clear_robot_targets()
         return False
