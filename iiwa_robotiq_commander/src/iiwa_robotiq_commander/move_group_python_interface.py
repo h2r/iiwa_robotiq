@@ -173,7 +173,7 @@ class MoveGroupPythonInterface(object):
     return plan
 
   ## args: goal_joints - list of joint values for each of the robot's joints
-  def go_to_joint_state(self, goal_joints, delay=4, wait_for_input=True, execute_plan=True):
+  def go_to_joint_state(self, goal_joints, delay=1, wait_for_input=True, execute_plan=True):
     plan = self.get_plan_to_joint_state(goal_joints)
 
     if execute_plan:
@@ -185,7 +185,7 @@ class MoveGroupPythonInterface(object):
   ## args: pose_goal_position - [x, y, z] ee desired position
   ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
   ##                        quaternion representing desired ee orientation
-  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, delay=4, wait_for_input=True, execute_plan=True):
+  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, delay=1, wait_for_input=True, execute_plan=True):
     if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
         raise rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
 
@@ -207,7 +207,7 @@ class MoveGroupPythonInterface(object):
 
     return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
 
-  def execute_plan(self, plan, delay=4, wait_for_input=True):
+  def execute_plan(self, plan, delay=1, wait_for_input=True):
     if wait_for_input:
       user_response = raw_input("Execute this motion plan? (y/n)\n")
       while user_response != "y" and user_response != "n" and user_response != "q":
