@@ -81,6 +81,40 @@
     </collision>
   </link>
 
+  <!-- Collision model for gripper cable connections -->
+  <link name="gripper_cable_link">
+    <visual>
+      <geometry>
+        <box size="0.0254 0.0254 0.0762"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="1.0 0.27 0.0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.0254 0.0254 0.0762"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Collision model for wrist cable connections -->
+  <link name="wrist_cable_link">
+    <visual>
+      <geometry>
+        <box size="0.0254 0.0254 0.0254"/>
+      </geometry>
+      <material name="orange">
+        <color rgba="1.0 0.27 0.0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.0254 0.0254 0.0254"/>
+      </geometry>
+    </collision>
+  </link>
+
   <!-- Link at surface of palm for planning. -->
   <link name="palm_surface"/>
   <!-- Link near the center of the grasp region for planning. -->
@@ -116,6 +150,18 @@
     <!-- Gazebo isn't happy about ${PI/2.0}-->
     <!--<origin xyz="0.0 0.0 0.075" rpy="${PI/2.0} 0 ${PI/2.0}" />-->
     <origin xyz="0.0 0.0 0.075" rpy="1.57079632679 0 1.57079632679" />
+  </joint>
+
+  <joint name="palm_to_gripper_cable" type="fixed">
+    <parent link="palm"/>
+    <child link="gripper_cable_link"/>
+    <origin xyz ="0.0927 -0.01 0.0"/>
+  </joint>
+
+  <joint name="ee_to_wrist_cable" type="fixed">
+    <parent link="iiwa_link_ee"/>
+    <child link="wrist_cable_link"/>
+    <origin xyz ="0.0 0.0727 -0.03"/>
   </joint>
 
   <joint name="palm_to_palm_surface" type="fixed">
