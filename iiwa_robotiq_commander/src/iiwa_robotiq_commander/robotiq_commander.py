@@ -54,88 +54,88 @@ class RobotiqInterface(object):
 
         self.command = Robotiq3FGripperRobotOutput();
 
-    def activate(self):
+    def activate(self, delay=20):
         self.command.rACT = 1
         self.command.rGTO = 1
         self.command.rSPA = 255
         self.command.rFRA = 150
         self.publisher.publish(self.command)
         self.activated = True
-        print "Now sleeping for 20 seconds while the hand activates."
-        rospy.sleep(20)
+        print "Now sleeping for {} seconds while the hand activates.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def basic_mode(self):
+    def basic_mode(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
         self.command.rMOD = 0
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def wide_mode(self):
+    def wide_mode(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
         self.command.rMOD = 2
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def pinch_mode(self):
+    def pinch_mode(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
         self.command.rMOD = 1
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def scissor_mode(self):
+    def scissor_mode(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
         self.command.rMOD = 3
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def close(self):
+    def close(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
         self.command.rPRA = 255
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def open(self):
+    def open(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
         self.command.rPRA = 0
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def reset(self):
+    def reset(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
         self.command.rACT = 0
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def go_to(self, value):
+    def go_to(self, value, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
@@ -146,11 +146,11 @@ class RobotiqInterface(object):
             return False
         self.command.rPRA = value
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def faster(self):
+    def faster(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
@@ -158,11 +158,11 @@ class RobotiqInterface(object):
         if self.command.rSPA > 255:
             self.command.rSPA = 255
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def slower(self):
+    def slower(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
@@ -170,11 +170,11 @@ class RobotiqInterface(object):
         if self.command.rSPA < 0:
             self.command.rSPA = 0
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def increase_force(self):
+    def increase_force(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
@@ -182,11 +182,11 @@ class RobotiqInterface(object):
         if self.command.rFRA > 255:
             self.command.rFRA = 255
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
 
-    def decrease_force(self):
+    def decrease_force(self, delay=3):
         if not self.activated:
             print "Activate the hand before using it."
             return False
@@ -194,6 +194,6 @@ class RobotiqInterface(object):
         if self.command.rFRA < 0:
             self.command.rFRA = 0
         self.publisher.publish(self.command)
-        print "Now sleeping for 3 seconds while the hand executes given command."
-        rospy.sleep(3)
+        print "Now sleeping for {} seconds while the hand executes given command.".format(delay)
+        rospy.sleep(delay)
         return True
