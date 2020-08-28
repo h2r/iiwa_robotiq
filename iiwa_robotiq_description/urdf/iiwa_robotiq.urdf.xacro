@@ -19,14 +19,14 @@
     <visual>
       <origin xyz="0 0 -0.05" rpy="0 0 0"/>
       <geometry>
-    <!-- 9.99cm thick so it doesn't intersect with arm model. -->
-    <box size="2.5 2.5 0.0999"/>
+        <!-- 9.99cm thick so it doesn't intersect with arm model. -->
+        <box size="2.5 2.5 0.0999"/>
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 0 -0.05" rpy="0 0 0"/>
       <geometry>
-    <box size="2.5 2.5 0.0999"/>
+        <box size="2.5 2.5 0.0999"/>
       </geometry>
     </collision>
   </link>
@@ -34,6 +34,41 @@
   <gazebo reference="world">
     <static>true</static>
   </gazebo>
+
+  <!-- Mat in front of arm - 1cm tall-->
+  <link name="mat">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="1.0 2.5 0.02"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="1.0 2.5 0.02"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="obj_box">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <!-- 12" 16" 8.5" -->
+        <box size="0.3048 0.4064 0.2159"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.627 0.321 0.176 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.3048 0.4064 0.2159"/>
+      </geometry>
+    </collision>
+  </link>
 
   <!-- Here we insert an iiwa7 robot in the scene, it's origin is just on top of the box previously defined.-->
   <xacro:iiwa7 hardware_interface="$(arg hardware_interface)" robot_name="$(arg robot_name)" parent="world">
@@ -122,6 +157,22 @@
 
   <!-- Link for structure sensor with OpenNI2-->
   <link name="camera_link"/>
+
+  <!-- Mat in front of arm - 17cm from origin in x direction-->
+  <joint name="world_to_mat" type="fixed">
+    <parent link="world"/>
+    <child link="mat"/>
+    <origin xyz ="0.67 0.0 0.0"/>
+  </joint>
+
+  <!-- 19.25 inches from center to box edge. x, back edge is at 0-->
+  <!-- 0.3048 0.4064 0.2159 -->
+  <joint name="world_to_obj_box" type="fixed">
+    <parent link="world"/>
+    <child link="obj_box"/>
+    <!-- -xdim/2, 19.25" + ydim/2, zdim=2-->
+    <origin xyz ="-0.1524 0.69215 0.10795"/>
+  </joint>
 
   <!-- The offset between iiwa_link_ee and palm was estimated to be 0.0975.
        Sum of z origin displacements of ee_to_flange and robotiq_joint. -->
