@@ -200,14 +200,34 @@ class MoveGroupPythonInterface(object):
 
     return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
 
-  def get_cartesian_plan(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None):
-    initial_state = start_state if start_state != None else self.robot.get_current_state()
+  def get_cartesian_plan(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, start_position=None, start_quat=None, eef_step=0.01):
+    # Assume start_position and start_quat are the pose of the end effector at the joints specified by start_state.
+    # All 3 must be specified
+    # The goal can be specified as two lists of position and quaternion, or a goal message
+
+    # Note: The initial pose is currently not used, just the start_state joints
+
+    initial_state = None
+    initial_pose = None
+    if start_state != None and start_position != None and start_quat != None:
+      initial_state = start_state
+      initial_pose = pose_lists_to_msg(start_position, start_quat)
+    else:
+      initial_state = self.robot.get_current_state()
+      initial_pose = self.group.get_current_pose().pose
+
     self.group.set_start_state(initial_state)
 
-    waypoints = []
+    goal_pose = None
+    if pose_goal_position != None and pose_goal_quat != None:
+      goal_pose = pose_lists_to_msg(pose_goal_position, pose_goal_quat)
+    else:
+      goal_pose = pose_goal
 
-    # TODO: Test to see if setting start state changes pose..
-    wpose = self.group.get_current_pose().pose
+    waypoints = [goal_pose]
+
+    '''
+    wpose = copy.deepcopy(initial_pose)
     wpose.position.z -= scale * 0.1  # First move up (z)
     wpose.position.y += scale * 0.2  # and sideways (y)
     waypoints.append(copy.deepcopy(wpose))
@@ -217,17 +237,22 @@ class MoveGroupPythonInterface(object):
 
     wpose.position.y -= scale * 0.1  # Third move sideways (y)
     waypoints.append(copy.deepcopy(wpose))
+    '''
 
     (plan, fraction) = self.group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
-                                       0.01,        # eef_step
+                                       eef_step,        # eef_step
                                        0.0)         # jump_threshold - disable
-    return
+    return plan, fraction
 
-  def go_to_cartesian_goal(self, ):
-    final_goal_pose = _
-    plan, fraction = self.get_cartesian_plan()
+  def go_to_cartesian_goal(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, start_position=None, start_quat=None, \
+    eef_step=0.01, delay=1, wait_for_input=True, execute_plan=True):
+    final_goal_pose = pose_goal if pose_goal != None else pose_lists_to_msg(pose_goal_position, pose_goal_quat)
+    plan, fraction = self.get_cartesian_plan(pose_goal_position=pose_goal_position, pose_goal_quat=pose_goal_quat, pose_goal=pose_goal, \
+      start_state=start_state, start_position=start_position, start_quat=start_quat, eef_step=eef_step)
     if execute_plan:
+      if fraction < 1.0:
+        rospy.logwarn("Now executing cartesian path that reaches {}% of the goal.".format(fraction*100))
       self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
     return all_close(final_goal_pose, self.group.get_current_pose().pose, 0.01)
@@ -257,20 +282,20 @@ def examples():
 if __name__ == '__main__':
   examples()
 
-    '''
-    def display_trajectory(self, plan):
-      ## Displaying a Trajectory
-      ## ^^^^^^^^^^^^^^^^^^^^^^^
-      ## You can ask RViz to visualize a plan (aka trajectory) for you. But the
-      ## group.plan() method does this automatically so this is not that useful
-      ## here (it just displays the same trajectory again):
-      ##
-      ## A `DisplayTrajectory`_ msg has two primary fields, trajectory_start and trajectory.
-      ## We populate the trajectory_start with our current robot state to copy over
-      ## any AttachedCollisionObjects and add our plan to the trajectory.
-      display_trajectory = moveit_msgs.msg.DisplayTrajectory()
-      display_trajectory.trajectory_start = self.robot.get_current_state()
-      display_trajectory.trajectory.append(plan)
-      # Publish
-      self.display_trajectory_publisher.publish(display_trajectory);
-    '''
+  '''
+  def display_trajectory(self, plan):
+    ## Displaying a Trajectory
+    ## ^^^^^^^^^^^^^^^^^^^^^^^
+    ## You can ask RViz to visualize a plan (aka trajectory) for you. But the
+    ## group.plan() method does this automatically so this is not that useful
+    ## here (it just displays the same trajectory again):
+    ##
+    ## A `DisplayTrajectory`_ msg has two primary fields, trajectory_start and trajectory.
+    ## We populate the trajectory_start with our current robot state to copy over
+    ## any AttachedCollisionObjects and add our plan to the trajectory.
+    display_trajectory = moveit_msgs.msg.DisplayTrajectory()
+    display_trajectory.trajectory_start = self.robot.get_current_state()
+    display_trajectory.trajectory.append(plan)
+    # Publish
+    self.display_trajectory_publisher.publish(display_trajectory);
+  '''
