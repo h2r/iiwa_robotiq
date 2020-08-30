@@ -83,6 +83,23 @@ def all_close(goal, actual, tolerance):
 ## args: move_group_name - defined by us using MoveIt config wizard. Options are
 ##              palm_surface, finger_grasp_centroid, palm_link
 
+# Orientation in xyzw ordering
+def pose_lists_to_msg(pose_goal_position, pose_goal_quat):
+  if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
+    raise rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
+
+  ## We can plan a motion for this group to a desired pose for the
+  ## end-effector:
+  pose_goal = geometry_msgs.msg.Pose()
+  pose_goal.position.x = pose_goal_position[0]
+  pose_goal.position.y = pose_goal_position[1]
+  pose_goal.position.z = pose_goal_position[2]
+  pose_goal.orientation.x = pose_goal_quat[0]
+  pose_goal.orientation.y = pose_goal_quat[1]
+  pose_goal.orientation.z = pose_goal_quat[2]
+  pose_goal.orientation.w = pose_goal_quat[3]
+  return pose_goal
+
 class MoveGroupPythonInterface(object):
   """MoveGroupPythonInterface"""
   def __init__(self, move_group_name="palm_surface"):
@@ -151,19 +168,7 @@ class MoveGroupPythonInterface(object):
   # Provide either pose_goal_position and pose_goal_quat lists or pose_goal pose msg
   def get_plan_to_pose_goal(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None):
     if (pose_goal_position != None and pose_goal_quat != None and pose_goal == None):
-      if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
-        raise rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
-
-      ## We can plan a motion for this group to a desired pose for the
-      ## end-effector:
-      pose_goal = geometry_msgs.msg.Pose()
-      pose_goal.position.x = pose_goal_position[0]
-      pose_goal.position.y = pose_goal_position[1]
-      pose_goal.position.z = pose_goal_position[2]
-      pose_goal.orientation.x = pose_goal_quat[0]
-      pose_goal.orientation.y = pose_goal_quat[1]
-      pose_goal.orientation.z = pose_goal_quat[2]
-      pose_goal.orientation.w = pose_goal_quat[3]
+      pose_goal = pose_lists_to_msg(pose_goal_position, pose_goal_quat)
 
     if start_state == None:
       self.group.set_start_state(self.robot.get_current_state())
@@ -186,19 +191,7 @@ class MoveGroupPythonInterface(object):
   ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
   ##                        quaternion representing desired ee orientation
   def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, delay=1, wait_for_input=True, execute_plan=True):
-    if len(pose_goal_position) != 3 or len(pose_goal_quat) != 4:
-        raise rospy.ROSException("Gave a pose command with {} position values and {} quaternion values.".format(len(pose_goal_position), len(pose_goal_quat)))
-
-    ## We can plan a motion for this group to a desired pose for the
-    ## end-effector:
-    pose_goal = geometry_msgs.msg.Pose()
-    pose_goal.position.x = pose_goal_position[0]
-    pose_goal.position.y = pose_goal_position[1]
-    pose_goal.position.z = pose_goal_position[2]
-    pose_goal.orientation.x = pose_goal_quat[0]
-    pose_goal.orientation.y = pose_goal_quat[1]
-    pose_goal.orientation.z = pose_goal_quat[2]
-    pose_goal.orientation.w = pose_goal_quat[3]
+    pose_goal = pose_lists_to_msg(pose_goal_position, pose_goal_quat)
 
     plan = self.get_plan_to_pose_goal(pose_goal=pose_goal)
 
@@ -206,6 +199,38 @@ class MoveGroupPythonInterface(object):
       self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
     return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
+
+  def get_cartesian_plan(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None):
+    initial_state = start_state if start_state != None else self.robot.get_current_state()
+    self.group.set_start_state(initial_state)
+
+    waypoints = []
+
+    # TODO: Test to see if setting start state changes pose..
+    wpose = self.group.get_current_pose().pose
+    wpose.position.z -= scale * 0.1  # First move up (z)
+    wpose.position.y += scale * 0.2  # and sideways (y)
+    waypoints.append(copy.deepcopy(wpose))
+
+    wpose.position.x += scale * 0.1  # Second move forward/backwards in (x)
+    waypoints.append(copy.deepcopy(wpose))
+
+    wpose.position.y -= scale * 0.1  # Third move sideways (y)
+    waypoints.append(copy.deepcopy(wpose))
+
+    (plan, fraction) = self.group.compute_cartesian_path(
+                                       waypoints,   # waypoints to follow
+                                       0.01,        # eef_step
+                                       0.0)         # jump_threshold - disable
+    return
+
+  def go_to_cartesian_goal(self, ):
+    final_goal_pose = _
+    plan, fraction = self.get_cartesian_plan()
+    if execute_plan:
+      self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
+
+    return all_close(final_goal_pose, self.group.get_current_pose().pose, 0.01)
 
   def execute_plan(self, plan, delay=1, wait_for_input=True):
     if wait_for_input:
@@ -232,42 +257,7 @@ def examples():
 if __name__ == '__main__':
   examples()
 
-  # TODO(mcorsaro): turn this Cartesian path tutorial into a function or remove
-  '''
-  def plan_cartesian_path(self, scale=1):
-    ## BEGIN_SUB_TUTORIAL plan_cartesian_path
-    ##
-    ## Cartesian Paths
-    ## ^^^^^^^^^^^^^^^
-    ## You can plan a Cartesian path directly by specifying a list of waypoints
-    ## for the end-effector to go through:
-    ##
-    waypoints = []
-
-    wpose = self.group.get_current_pose().pose
-    wpose.position.z -= scale * 0.1  # First move up (z)
-    wpose.position.y += scale * 0.2  # and sideways (y)
-    waypoints.append(copy.deepcopy(wpose))
-
-    wpose.position.x += scale * 0.1  # Second move forward/backwards in (x)
-    waypoints.append(copy.deepcopy(wpose))
-
-    wpose.position.y -= scale * 0.1  # Third move sideways (y)
-    waypoints.append(copy.deepcopy(wpose))
-
-    # We want the Cartesian path to be interpolated at a resolution of 1 cm
-    # which is why we will specify 0.01 as the eef_step in Cartesian
-    # translation.  We will disable the jump threshold by setting it to 0.0 disabling:
-    (plan, fraction) = self.group.compute_cartesian_path(
-                                       waypoints,   # waypoints to follow
-                                       0.01,        # eef_step
-                                       0.0)         # jump_threshold
-
-    # Note: We are just planning, not asking move_group to actually move the robot yet:
-    return plan, fraction
-
-    ## END_SUB_TUTORIAL
-
+    '''
     def display_trajectory(self, plan):
       ## Displaying a Trajectory
       ## ^^^^^^^^^^^^^^^^^^^^^^^
