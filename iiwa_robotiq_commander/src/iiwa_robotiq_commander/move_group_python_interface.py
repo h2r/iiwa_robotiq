@@ -255,7 +255,7 @@ class MoveGroupPythonInterface(object):
         rospy.logwarn("Now executing cartesian path that reaches {}% of the goal.".format(fraction*100))
       self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
-    return all_close(final_goal_pose, self.group.get_current_pose().pose, 0.01)
+    return all_close(final_goal_pose, self.group.get_current_pose().pose, 0.01), fraction
 
   def execute_plan(self, plan, delay=1, wait_for_input=True):
     if wait_for_input:
