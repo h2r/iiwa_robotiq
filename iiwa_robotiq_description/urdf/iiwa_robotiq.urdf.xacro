@@ -185,7 +185,7 @@
   <joint name="ee_to_structure" type="fixed">
     <parent link="iiwa_link_ee"/>
     <child link="camera_link"/>
-    <origin xyz ="0.04 -0.08 0.03" rpy="0 0 -1.5707963"/>
+    <origin xyz ="0.049 -0.082 0.03" rpy="0 0 -1.5707963"/>
   </joint>
 
   <joint name="structure_to_sensor_model" type="fixed">
