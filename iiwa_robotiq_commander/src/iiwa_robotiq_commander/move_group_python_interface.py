@@ -200,7 +200,7 @@ class MoveGroupPythonInterface(object):
 
     return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
 
-  def get_cartesian_plan(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, start_position=None, start_quat=None, eef_step=0.01):
+  def get_cartesian_plan(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, start_position=None, start_quat=None, planning_time=None, eef_step=0.01):
     # Assume start_position and start_quat are the pose of the end effector at the joints specified by start_state.
     # All 3 must be specified
     # The goal can be specified as two lists of position and quaternion, or a goal message
@@ -238,11 +238,15 @@ class MoveGroupPythonInterface(object):
     wpose.position.y -= scale * 0.1  # Third move sideways (y)
     waypoints.append(copy.deepcopy(wpose))
     '''
-
+    if planning_time != None:
+      original_planning_time = self.group.get_planning_time()
+      self.group.set_planning_time(planning_time)
     (plan, fraction) = self.group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
                                        eef_step,        # eef_step
                                        0.0)         # jump_threshold - disable
+    if planning_time != None:
+      self.group.set_planning_time(original_planning_time)
     return plan, fraction
 
   def go_to_cartesian_goal(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, start_position=None, start_quat=None, \
