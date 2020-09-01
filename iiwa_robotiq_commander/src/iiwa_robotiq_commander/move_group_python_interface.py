@@ -190,13 +190,19 @@ class MoveGroupPythonInterface(object):
   ## args: pose_goal_position - [x, y, z] ee desired position
   ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
   ##                        quaternion representing desired ee orientation
-  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, delay=1, wait_for_input=True, execute_plan=True):
+  def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, delay=1, wait_for_input=True, execute_plan=True, add_constraints=False):
     pose_goal = pose_lists_to_msg(pose_goal_position, pose_goal_quat)
+
+    if add_constraints:
+      self.add_path_constraints(pose_goal)
 
     plan = self.get_plan_to_pose_goal(pose_goal=pose_goal)
 
     if execute_plan:
       self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
+
+    if add_constraints:
+      self.remove_all_path_constraints()
 
     return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
 
@@ -260,6 +266,27 @@ class MoveGroupPythonInterface(object):
       self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
     return all_close(final_goal_pose, self.group.get_current_pose().pose, 0.01), fraction
+
+  def add_path_constraints(self, pose_msg):
+    point_down_constraints = moveit_msgs.msg.Constraints()
+    point_down_constraints.name = "point_down"
+    orientation_constraint = moveit_msgs.msg.OrientationConstraint()
+    #orientation_constraint.header = pose_msg.header
+    orientation_constraint.header.frame_id = "/world"
+    orientation_constraint.link_name = self.group.get_end_effector_link()
+    orientation_constraint.orientation = pose_msg.orientation
+    orientation_constraint.absolute_x_axis_tolerance = 0.785 #stay within pi/4 of goal
+    orientation_constraint.absolute_y_axis_tolerance = 3.14 #ignore this axis
+    orientation_constraint.absolute_z_axis_tolerance = 0.785 #stay within pi/4 of goal
+    orientation_constraint.weight = 1
+
+    point_down_constraints.orientation_constraints.append(orientation_constraint)
+    self.group.set_path_constraints(point_down_constraints)
+    self.group.set_planning_time(10)
+
+  def remove_all_path_constraints(self):
+    self.group.clear_path_constraints()
+    self.group.set_planning_time(5)
 
   def execute_plan(self, plan, delay=1, wait_for_input=True):
     if wait_for_input:
