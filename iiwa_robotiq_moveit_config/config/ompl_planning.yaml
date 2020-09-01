@@ -178,6 +178,7 @@ finger_grasp_centroid:
   longest_valid_segment_fraction: 0.005
 palm_link:
   default_planner_config: RRTConnect
+  enforce_joint_model_state_space: true
   planner_configs:
     - SBL
     - EST
