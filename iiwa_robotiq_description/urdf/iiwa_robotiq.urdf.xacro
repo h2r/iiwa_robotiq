@@ -56,8 +56,7 @@
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <!-- 12" 16" 8.5" -->
-        <!-- Real z: 0.2159 -->
-        <box size="0.3048 0.4064 0.3"/>
+        <box size="0.3048 0.4064 0.2159"/>
       </geometry>
       <material name="brown">
         <color rgba="0.627 0.321 0.176 1"/>
@@ -66,7 +65,7 @@
     <collision>
       <origin xyz="0 0 0.0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.3048 0.4064 0.3"/>
+        <box size="0.3048 0.4064 0.2159"/>
       </geometry>
     </collision>
   </link>
@@ -138,7 +137,7 @@
   <link name="wrist_cable_link">
     <visual>
       <geometry>
-        <box size="0.0254 0.0354 0.0254"/>
+        <box size="0.0254 0.0254 0.0254"/>
       </geometry>
       <material name="orange">
         <color rgba="1.0 0.27 0.0 1"/>
@@ -146,7 +145,7 @@
     </visual>
     <collision>
       <geometry>
-        <box size="0.0254 0.0354 0.0254"/>
+        <box size="0.0254 0.0254 0.0254"/>
       </geometry>
     </collision>
   </link>
@@ -171,8 +170,8 @@
   <joint name="world_to_obj_box" type="fixed">
     <parent link="world"/>
     <child link="obj_box"/>
-    <!-- -xdim/2, 19.25" + ydim/2, zdim/2-->
-    <origin xyz ="-0.1524 0.69215 0.15"/>
+    <!-- -xdim/2, 19.25" + ydim/2, zdim=2-->
+    <origin xyz ="-0.1524 0.69215 0.10795"/>
   </joint>
 
   <!-- The offset between iiwa_link_ee and palm was estimated to be 0.0975.
@@ -213,8 +212,7 @@
   <joint name="ee_to_wrist_cable" type="fixed">
     <parent link="iiwa_link_ee"/>
     <child link="wrist_cable_link"/>
-    <!-- Link extended by 0.01 in y direction - offset from 0.0727 to ...-->
-    <origin xyz ="0.0 0.0777 -0.03"/>
+    <origin xyz ="0.0 0.0727 -0.03"/>
   </joint>
 
   <joint name="palm_to_palm_surface" type="fixed">
