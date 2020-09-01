@@ -185,7 +185,7 @@ class MoveGroupPythonInterface(object):
       self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
     current_joints = self.group.get_current_joint_values()
-    return all_close(goal_joints, current_joints, 0.01)
+    return all_close(goal_joints, current_joints, 0.01), len(plan.joint_trajectory.points)
 
   ## args: pose_goal_position - [x, y, z] ee desired position
   ##       pose_goal_quat - [x, y, z, w] (geometry_msgs/Quaternion.msg order)
@@ -198,13 +198,13 @@ class MoveGroupPythonInterface(object):
 
     plan = self.get_plan_to_pose_goal(pose_goal=pose_goal)
 
-    if execute_plan:
-      self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
-
     if add_constraints:
       self.remove_all_path_constraints()
 
-    return all_close(pose_goal, self.group.get_current_pose().pose, 0.01)
+    if execute_plan:
+      self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
+
+    return all_close(pose_goal, self.group.get_current_pose().pose, 0.01), len(plan.joint_trajectory.points)
 
   def get_cartesian_plan(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, start_position=None, start_quat=None, planning_time=None, eef_step=0.01):
     # Assume start_position and start_quat are the pose of the end effector at the joints specified by start_state.
@@ -265,7 +265,7 @@ class MoveGroupPythonInterface(object):
         rospy.logwarn("Now executing cartesian path that reaches {}% of the goal.".format(fraction*100))
       self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
-    return all_close(final_goal_pose, self.group.get_current_pose().pose, 0.01), fraction
+    return all_close(final_goal_pose, self.group.get_current_pose().pose, 0.01), fraction, len(plan.joint_trajectory.points)
 
   def add_path_constraints(self, pose_msg):
     point_down_constraints = moveit_msgs.msg.Constraints()
