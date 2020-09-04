@@ -22,6 +22,9 @@
         <!-- 9.99cm thick so it doesn't intersect with arm model. -->
         <box size="2.5 2.5 0.0999"/>
       </geometry>
+      <material name="gray">
+        <color rgba="0.75 0.75 0.75 1"/>
+      </material>
     </visual>
     <collision>
       <origin xyz="0 0 -0.05" rpy="0 0 0"/>
@@ -42,6 +45,9 @@
       <geometry>
         <box size="1.0 2.5 0.02"/>
       </geometry>
+      <material name="black">
+        <color rgba="0.0 0.0 0.0 1"/>
+      </material>
     </visual>
     <collision>
       <origin xyz="0 0 0.0" rpy="0 0 0"/>
