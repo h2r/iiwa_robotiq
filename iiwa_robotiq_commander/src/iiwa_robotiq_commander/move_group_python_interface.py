@@ -290,9 +290,9 @@ class MoveGroupPythonInterface(object):
 
   def execute_plan(self, plan, delay=1, wait_for_input=True):
     if wait_for_input:
-      user_response = raw_input("Execute this motion plan? (y/n)\n")
+      user_response = raw_input("Execute this motion plan containing {} trajectory points? (y/n)\n".format(len(plan.joint_trajectory.points)))
       while user_response != "y" and user_response != "n" and user_response != "q":
-        user_response = raw_input("Execute this motion plan? (y/n)\n")
+        user_response = raw_input("Execute this motion plan containing {} trajectory points? (y/n)\n".format(len(plan.joint_trajectory.points)))
       if user_response == "q":
         sys.exit("USER REQUESTED EXIT.")
       if user_response == "n":
