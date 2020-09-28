@@ -109,7 +109,8 @@
     <visual>
       <geometry>
         <!-- 5" wide, 1" other two dimensions. Surface (x) is at origin -->
-        <box size="0.0254 0.127 0.0254"/>
+        <!-- x increase .01, y increase .1, z increase 0.005 -->
+        <box size="0.0324 0.137 0.0304"/>
       </geometry>
       <material name="orange">
         <color rgba="1.0 0.27 0.0 1"/>
@@ -117,7 +118,7 @@
     </visual>
     <collision>
       <geometry>
-        <box size="0.0254 0.127 0.0254"/>
+        <box size="0.0324 0.137 0.0304"/>
       </geometry>
     </collision>
   </link>
@@ -198,7 +199,8 @@
     <parent link="camera_link"/>
     <child link="structure_sensor_model"/>
     <!-- x offset half x dim so it's at surface, y to center it-->
-    <origin xyz="-0.0127 -0.04 0" rpy="0 0 0"/>
+    <!--<origin xyz="-0.0127 -0.04 0" rpy="0 0 0"/>-->
+    <origin xyz="-0.0162 -0.05 0" rpy="0 0 0"/>
   </joint>
 
   <joint name="robotiq_joint" type="fixed">
