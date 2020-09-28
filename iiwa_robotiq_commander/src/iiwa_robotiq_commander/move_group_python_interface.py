@@ -193,13 +193,16 @@ class MoveGroupPythonInterface(object):
   def go_to_pose_goal(self, pose_goal_position, pose_goal_quat, delay=1, wait_for_input=True, execute_plan=True, add_constraints=False):
     pose_goal = pose_lists_to_msg(pose_goal_position, pose_goal_quat)
 
+    original_planning_time = self.group.get_planning_time()
     if add_constraints:
       self.add_path_constraints(pose_goal)
+      self.group.set_planning_time(10)
 
     plan = self.get_plan_to_pose_goal(pose_goal=pose_goal)
 
     if add_constraints:
-      self.remove_all_path_constraints()
+      self.group.clear_path_constraints()
+      self.group.set_planning_time(original_planning_time)
 
     if execute_plan:
       self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
@@ -282,11 +285,6 @@ class MoveGroupPythonInterface(object):
 
     point_down_constraints.orientation_constraints.append(orientation_constraint)
     self.group.set_path_constraints(point_down_constraints)
-    self.group.set_planning_time(10)
-
-  def remove_all_path_constraints(self):
-    self.group.clear_path_constraints()
-    self.group.set_planning_time(5)
 
   def execute_plan(self, plan, delay=1, wait_for_input=True):
     if wait_for_input:
