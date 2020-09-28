@@ -144,7 +144,8 @@
   <link name="wrist_cable_link">
     <visual>
       <geometry>
-        <box size="0.0254 0.0254 0.0254"/>
+        <!--<box size="0.0254 0.0254 0.0254"/>-->
+        <box size="0.03 0.03 0.0254"/>
       </geometry>
       <material name="orange">
         <color rgba="1.0 0.27 0.0 1"/>
@@ -152,7 +153,7 @@
     </visual>
     <collision>
       <geometry>
-        <box size="0.0254 0.0254 0.0254"/>
+        <box size="0.03 0.03 0.0254"/>
       </geometry>
     </collision>
   </link>
