@@ -181,6 +181,7 @@ class MoveGroupPythonInterface(object):
   def go_to_joint_state(self, goal_joints, delay=1, wait_for_input=True, execute_plan=True):
     plan = self.get_plan_to_joint_state(goal_joints)
 
+    executed_plan = False
     if execute_plan:
       executed_plan = self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
@@ -204,6 +205,7 @@ class MoveGroupPythonInterface(object):
       self.group.clear_path_constraints()
       self.group.set_planning_time(original_planning_time)
 
+    executed_plan = False
     if execute_plan:
       executed_plan = self.execute_plan(plan, delay=delay, wait_for_input=wait_for_input)
 
@@ -263,6 +265,7 @@ class MoveGroupPythonInterface(object):
     final_goal_pose = pose_goal if pose_goal != None else pose_lists_to_msg(pose_goal_position, pose_goal_quat)
     plan, fraction = self.get_cartesian_plan(pose_goal_position=pose_goal_position, pose_goal_quat=pose_goal_quat, pose_goal=pose_goal, \
       start_state=start_state, start_position=start_position, start_quat=start_quat, eef_step=eef_step)
+    executed_plan = False
     if execute_plan:
       if fraction < 1.0:
         rospy.logwarn("Now executing cartesian path that reaches {}% of the goal.".format(fraction*100))
