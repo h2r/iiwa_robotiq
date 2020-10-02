@@ -61,8 +61,8 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <!-- 12" 16" 8.5" -->
-        <box size="0.3048 0.4064 0.2159"/>
+        <!-- 12"+ 16" 8.5"+ -->
+        <box size="0.35 0.4064 0.25"/>
       </geometry>
       <material name="brown">
         <color rgba="0.627 0.321 0.176 1"/>
