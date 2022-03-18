@@ -38,6 +38,25 @@
     <static>true</static>
   </gazebo>
 
+  <!-- Table behind wall, arm - 1m back-->
+  <link name="wall">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 10 5"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.0 0.0 0.0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="1.0 2.5 0.02"/>
+      </geometry>
+    </collision>
+  </link>
+
   <!-- Mat in front of arm - 1cm tall-->
   <link name="mat">
     <visual>
@@ -171,6 +190,13 @@
     <parent link="world"/>
     <child link="mat"/>
     <origin xyz ="0.67 0.0 0.0"/>
+  </joint>
+
+  <!-- wall behind arm-->
+  <joint name="world_to_wall" type="fixed">
+    <parent link="world"/>
+    <child link="wall"/>
+    <origin xyz ="-1 0 0.0"/>
   </joint>
 
   <!-- 19.25 inches from center to box edge. x, back edge is at 0-->
