@@ -137,6 +137,28 @@ class MoveGroupPythonInterface(object):
     self.planning_frame = self.group.get_planning_frame()
     self.eef_link = self.group.get_end_effector_link()
 
+    self.added_objects = []
+
+  def add_box_obstacle(self, position, orientation, size, name="box"):
+    if name not in self.added_objects:
+      self.added_objects.append(name)
+      box_pose = geometry_msgs.msg.PoseStamped()
+      box_pose.header.frame_id = "world"
+      box_pose.pose.position.x = position[0]
+      box_pose.pose.position.y = position[1]
+      box_pose.pose.position.z = position[2]
+      box_pose.pose.orientation.x = orientation[0]
+      box_pose.pose.orientation.y = orientation[1]
+      box_pose.pose.orientation.z = orientation[2]
+      box_pose.pose.orientation.w = orientation[3]
+
+      self.scene.add_box(name, box_pose, size=size)
+
+  def remove_box_obstacle(self, name):
+    if name in self.added_objects:
+      self.scene.remove_world_object(name)
+      self.added_objects.remove(name)
+
   def clear_robot_targets(self):
     # Calling `stop()` ensures that there is no residual movement
     self.group.stop()
