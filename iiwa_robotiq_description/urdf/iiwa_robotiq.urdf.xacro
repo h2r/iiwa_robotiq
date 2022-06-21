@@ -269,11 +269,11 @@
     <origin xyz ="-0.1524 0.64135 0.10795"/>
   </joint>-->
 
-  <!-- 30" tall, 36.75" from origin to surface in x, left side is 3" out into y, 17.5" wide, 12.5" deep -->
+  <!-- 30" tall, 38" (we use 34.75") from origin to surface in x, left side is 3" out into y, 17.5" wide, 12.5" deep -->
   <joint name="world_to_cabinet" type="fixed">
     <parent link="world"/>
     <child link="cabinet"/>
-    <origin xyz ="1.0922 -0.14605 0.5"/>
+    <origin xyz ="1.0414 -0.14605 0.5"/>
   </joint>
 
   <!-- The offset between iiwa_link_ee and palm was estimated to be 0.0975.
