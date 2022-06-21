@@ -101,7 +101,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.3175 0.4445 0.762"/>
+        <box size="0.3175 0.4445 1.0"/>
       </geometry>
       <material name="brown">
         <color rgba="0.627 0.321 0.176 1"/>
@@ -110,7 +110,7 @@
     <collision>
       <origin xyz="0 0 0.0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.3175 0.4445 0.762"/>
+        <box size="0.3175 0.4445 1.0"/>
       </geometry>
     </collision>
   </link>
@@ -228,11 +228,11 @@
     <origin xyz ="-0.1524 0.64135 0.10795"/>
   </joint>-->
 
-  <!-- 30" tall, 38" from origin to surface in x, left side is 3" out into y, 17.5" wide, 12.5" deep -->
+  <!-- 30" tall, 36.75" from origin to surface in x, left side is 3" out into y, 17.5" wide, 12.5" deep -->
   <joint name="world_to_cabinet" type="fixed">
     <parent link="world"/>
     <child link="cabinet"/>
-    <origin xyz ="1.12395 -0.14605 0.381"/>
+    <origin xyz ="1.0922 -0.14605 0.5"/>
   </joint>
 
   <!-- The offset between iiwa_link_ee and palm was estimated to be 0.0975.
