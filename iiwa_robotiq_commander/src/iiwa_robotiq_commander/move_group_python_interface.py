@@ -154,7 +154,7 @@ class MoveGroupPythonInterface(object):
 
       self.scene.add_box(name, box_pose, size=size)
 
-  def remove_box_obstacle(self, name):
+  def remove_obstacle(self, name):
     if name in self.added_objects:
       self.scene.remove_world_object(name)
       self.added_objects.remove(name)
