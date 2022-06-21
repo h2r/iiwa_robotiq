@@ -134,7 +134,10 @@
       </material>
     </visual>
     <collision>
-      
+      <origin xyz="-0.263525 -0.1651 -0.119" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.4572" radius="0.028575"/>
+      </geometry>
     </collision>
 
     <!-- Handle blocks lower -->
