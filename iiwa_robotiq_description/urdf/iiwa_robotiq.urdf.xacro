@@ -76,12 +76,13 @@
     </collision>
   </link>
 
-  <link name="obj_box">
+  <!-- Box for dropping objects, to the left of the arm -->
+  <!-- 12"+ 16" 8.5"+ -->
+  <!--<link name="obj_box">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <!-- 12"+ 16" 8.5"+ -->
-        <box size="0.35 0.4064 0.25"/>
+        <box size="0.3048 0.4064 0.2159"/>
       </geometry>
       <material name="brown">
         <color rgba="0.627 0.321 0.176 1"/>
@@ -91,6 +92,25 @@
       <origin xyz="0 0 0.0" rpy="0 0 0"/>
       <geometry>
         <box size="0.3048 0.4064 0.2159"/>
+      </geometry>
+    </collision>
+  </link>-->
+
+  <!-- 30" tall, 38" from origin to surface in x, left side is 3" out into y, 17.5" wide, 12.5" deep -->
+  <link name="cabinet">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.3175 0.4445 0.762"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.627 0.321 0.176 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.3175 0.4445 0.762"/>
       </geometry>
     </collision>
   </link>
@@ -201,11 +221,18 @@
 
   <!-- 19.25 inches from center to box edge. x, back edge is at 0-->
   <!-- 0.3048 0.4064 0.2159 -->
-  <joint name="world_to_obj_box" type="fixed">
+  <!-- origin: -xdim/2, 19.25" + ydim/2 - 2", zdim=2-->
+  <!--<joint name="world_to_obj_box" type="fixed">
     <parent link="world"/>
     <child link="obj_box"/>
-    <!-- -xdim/2, 19.25" + ydim/2 - 2", zdim=2-->
     <origin xyz ="-0.1524 0.64135 0.10795"/>
+  </joint>-->
+
+  <!-- 30" tall, 38" from origin to surface in x, left side is 3" out into y, 17.5" wide, 12.5" deep -->
+  <joint name="world_to_cabinet" type="fixed">
+    <parent link="world"/>
+    <child link="cabinet"/>
+    <origin xyz ="1.12395 -0.14605 0.381"/>
   </joint>
 
   <!-- The offset between iiwa_link_ee and palm was estimated to be 0.0975.
