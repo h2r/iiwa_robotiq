@@ -97,7 +97,14 @@
   </link>-->
 
   <!-- 30" tall, 38" from origin to surface in x, left side is 3" out into y, 17.5" wide, 12.5" deep -->
+  <!-- Blocks: 10.5" from center to edge negative y.-->
+  <!--         z from 4 to 8, then another 14" to 18"-->
+  <!--         3.5" into x, 7 for whole rack-->
+  <!--         3.5" wide (y) -->
+  <!--         y_org in world: 10.5+3.5/2= 12.25-->
+  <!--         y_org in door: 12.25-(17.5/2-3)=6.5 -->
   <link name="cabinet">
+    <!-- Main cabinet -->
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -111,6 +118,40 @@
       <origin xyz="0 0 0.0" rpy="0 0 0"/>
       <geometry>
         <box size="0.3175 0.4445 1.0"/>
+      </geometry>
+    </collision>
+
+    <!-- Handle blocks lower -->
+    <visual>
+      <origin xyz="-0.24765 -0.1651 -0.3476" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1778 0.0889 0.1016"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.627 0.321 0.176 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.24765 -0.1651 -0.3476" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1778 0.0889 0.1016"/>
+      </geometry>
+    </collision>
+
+    <!-- Handle blocks upper -->
+    <visual>
+      <origin xyz="-0.24765 -0.1651 0.1096" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1778 0.0889 0.1016"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.627 0.321 0.176 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.24765 -0.1651 0.1096" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1778 0.0889 0.1016"/>
       </geometry>
     </collision>
   </link>
