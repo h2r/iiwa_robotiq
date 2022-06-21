@@ -121,6 +121,22 @@
       </geometry>
     </collision>
 
+    <!-- Handle -->
+    <!-- 29" from origin to outer bit of noodle, 2.25 wide - 10.375" x from origin w/ 41" x origin-->
+    <!-- z origin halfway between blocks -->
+    <visual>
+      <origin xyz="-0.263525 -0.1651 -0.119" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.4572" radius="0.028575"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.627 0.321 0.176 1"/>
+      </material>
+    </visual>
+    <collision>
+      
+    </collision>
+
     <!-- Handle blocks lower -->
     <visual>
       <origin xyz="-0.24765 -0.1651 -0.3476" rpy="0 0 0"/>
