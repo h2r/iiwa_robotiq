@@ -96,7 +96,7 @@
     </collision>
   </link>-->
 
-  <!-- 30" tall, 38" from origin to surface in x, left side is 3" out into y, 17.5" wide, 12.5" deep -->
+  <!-- 30" tall, 38" from origin to surface in x, left side is 3" out into y, 17.5" + 8.5"padding wide, 12.5" deep -->
   <!-- Blocks: 10.5" from center to edge negative y.-->
   <!--         z from 4 to 8, then another 14" to 18"-->
   <!--         3.5" into x, 7 for whole rack-->
@@ -108,7 +108,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.3175 0.4445 1.0"/>
+        <box size="0.3175 0.6604 1.0"/>
       </geometry>
       <material name="brown">
         <color rgba="0.627 0.321 0.176 1"/>
@@ -117,7 +117,7 @@
     <collision>
       <origin xyz="0 0 0.0" rpy="0 0 0"/>
       <geometry>
-        <box size="0.3175 0.4445 1.0"/>
+        <box size="0.3175 0.6604 1.0"/>
       </geometry>
     </collision>
 
