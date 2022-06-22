@@ -126,68 +126,68 @@
     <!-- z origin halfway between blocks -->
     <!-- We're gonna make this a collision object. -->
     <!--<visual>
-      <origin xyz="-0.263525 -0.1651 -0.119" rpy="0 0 0"/>
+      <origin xyz="-0.31115 -0.18415 -0.119" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.4572" radius="0.028575"/>
+        <cylinder length="0.4572" radius="0.04445"/>
       </geometry>
       <material name="brown">
         <color rgba="0.627 0.321 0.176 1"/>
       </material>
     </visual>
     <collision>
-      <origin xyz="-0.263525 -0.1651 -0.119" rpy="0 0 0"/>
+      <origin xyz="-0.31115 -0.18415 -0.119" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.4572" radius="0.028575"/>
+        <cylinder length="0.4572" radius="0.04445"/>
       </geometry>
     </collision>-->
     <!-- Equivalent box for testing purposes -->
     <!--<visual>
-      <origin xyz="-0.263525 -0.1651 -0.119" rpy="0 0 0"/>
+      <origin xyz="-0.3175 -0.18415 -0.119" rpy="0 0 0"/>
       <geometry>
-        <box size="0.05715 0.05715 0.4572"/>
+        <box size="0.0889 0.0889 0.4572"/>
       </geometry>
       <material name="brown">
         <color rgba="0.627 0.321 0.176 1"/>
       </material>
     </visual>
     <collision>
-      <origin xyz="-0.263525 -0.1651 -0.119" rpy="0 0 0"/>
+      <origin xyz="-0.3175 -0.18415 -0.119" rpy="0 0 0"/>
       <geometry>
-        <box size="0.05715 0.05715 0.4572"/>
+        <box size="0.0889 0.0889 0.4572"/>
       </geometry>
     </collision>-->
 
     <!-- Handle blocks lower -->
     <visual>
-      <origin xyz="-0.24765 -0.1651 -0.3476" rpy="0 0 0"/>
+      <origin xyz="-0.24765 -0.18415 -0.3476" rpy="0 0 0"/>
       <geometry>
-        <box size="0.1778 0.0889 0.1016"/>
+        <box size="0.1778 0.1143 0.1143"/>
       </geometry>
       <material name="brown">
         <color rgba="0.627 0.321 0.176 1"/>
       </material>
     </visual>
     <collision>
-      <origin xyz="-0.24765 -0.1651 -0.3476" rpy="0 0 0"/>
+      <origin xyz="-0.24765 -0.18415 -0.3476" rpy="0 0 0"/>
       <geometry>
-        <box size="0.1778 0.0889 0.1016"/>
+        <box size="0.1778 0.1143 0.1143"/>
       </geometry>
     </collision>
 
     <!-- Handle blocks upper -->
     <visual>
-      <origin xyz="-0.24765 -0.1651 0.1096" rpy="0 0 0"/>
+      <origin xyz="-0.24765 -0.18415 0.1096" rpy="0 0 0"/>
       <geometry>
-        <box size="0.1778 0.0889 0.1016"/>
+        <box size="0.1778 0.1143 0.1143"/>
       </geometry>
       <material name="brown">
         <color rgba="0.627 0.321 0.176 1"/>
       </material>
     </visual>
     <collision>
-      <origin xyz="-0.24765 -0.1651 0.1096" rpy="0 0 0"/>
+      <origin xyz="-0.24765 -0.18415 0.1096" rpy="0 0 0"/>
       <geometry>
-        <box size="0.1778 0.0889 0.1016"/>
+        <box size="0.1778 0.1143 0.1143"/>
       </geometry>
     </collision>
   </link>
@@ -309,7 +309,8 @@
   <joint name="world_to_cabinet" type="fixed">
     <parent link="world"/>
     <child link="cabinet"/>
-    <origin xyz ="1.0414 -0.14605 0.5"/>
+    <!--xyz ="1.0414 -0.14605 0.5"-->
+    <origin xyz ="1.143 -0.0508 0.5" rpy="0 0 0.418"/>
   </joint>
 
   <!-- The offset between iiwa_link_ee and palm was estimated to be 0.0975.
