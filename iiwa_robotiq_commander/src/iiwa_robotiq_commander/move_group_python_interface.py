@@ -139,8 +139,11 @@ class MoveGroupPythonInterface(object):
 
     self.added_objects = []
 
-  '''
   def add_box_obstacle(self, position, orientation, size, name="box", frame_id="world"):
+    # IMPORTANT: this publishes to /collision_object, but we need it on /iiwa/collision_object
+    #            and setting the namespace doesn't appear to change where it's published.
+    #            Instead, include this in the launch file where you use this class:
+    # <remap from="/collision_object" to="/iiwa/collision_object"/>
     if name not in self.added_objects:
 
       self.added_objects.append(name)
@@ -162,7 +165,7 @@ class MoveGroupPythonInterface(object):
         print(self.scene.get_known_object_names(), self.scene.get_attached_objects([name]))
         # Sleep so that we give other threads time on the processor
         rospy.sleep(0.1)
-    rospy.loginfo("Added " + name + " to MoveIt scene.")
+      rospy.loginfo("Added " + name + " to MoveIt scene.")
 
   def remove_obstacle(self, name):
     if name in self.added_objects:
@@ -174,8 +177,7 @@ class MoveGroupPythonInterface(object):
         is_known = name in self.scene.get_known_object_names()
         # Sleep so that we give other threads time on the processor
         rospy.sleep(0.1)
-    rospy.loginfo("Removed " + name + " from MoveIt scene.")
-  '''
+      rospy.loginfo("Removed " + name + " from MoveIt scene.")
 
   def clear_robot_targets(self):
     # Calling `stop()` ensures that there is no residual movement
