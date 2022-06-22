@@ -139,11 +139,13 @@ class MoveGroupPythonInterface(object):
 
     self.added_objects = []
 
-  def add_box_obstacle(self, position, orientation, size, name="box"):
+  '''
+  def add_box_obstacle(self, position, orientation, size, name="box", frame_id="world"):
     if name not in self.added_objects:
+
       self.added_objects.append(name)
       box_pose = geometry_msgs.msg.PoseStamped()
-      box_pose.header.frame_id = "world"
+      box_pose.header.frame_id = frame_id
       box_pose.pose.position.x = position[0]
       box_pose.pose.position.y = position[1]
       box_pose.pose.position.z = position[2]
@@ -154,10 +156,26 @@ class MoveGroupPythonInterface(object):
 
       self.scene.add_box(name, box_pose, size=size)
 
+      is_known = False
+      while not is_known:
+        is_known = name in self.scene.get_known_object_names()
+        print(self.scene.get_known_object_names(), self.scene.get_attached_objects([name]))
+        # Sleep so that we give other threads time on the processor
+        rospy.sleep(0.1)
+    rospy.loginfo("Added " + name + " to MoveIt scene.")
+
   def remove_obstacle(self, name):
     if name in self.added_objects:
       self.scene.remove_world_object(name)
       self.added_objects.remove(name)
+
+      is_known = True
+      while is_known:
+        is_known = name in self.scene.get_known_object_names()
+        # Sleep so that we give other threads time on the processor
+        rospy.sleep(0.1)
+    rospy.loginfo("Removed " + name + " from MoveIt scene.")
+  '''
 
   def clear_robot_targets(self):
     # Calling `stop()` ensures that there is no residual movement
