@@ -125,7 +125,7 @@
     <!-- 29" from origin to outer bit of noodle, 2.25 wide - 10.375" x from origin w/ 41" x origin-->
     <!-- z origin halfway between blocks -->
     <!-- We're gonna make this a collision object. -->
-    <visual>
+    <!--<visual>
       <origin xyz="-0.31115 -0.18415 -0.119" rpy="0 0 0"/>
       <geometry>
         <cylinder length="0.4572" radius="0.04445"/>
@@ -139,7 +139,7 @@
       <geometry>
         <cylinder length="0.4572" radius="0.04445"/>
       </geometry>
-    </collision>
+    </collision>-->
     <!-- Equivalent box for testing purposes -->
     <!--<visual>
       <origin xyz="-0.3175 -0.18415 -0.119" rpy="0 0 0"/>
