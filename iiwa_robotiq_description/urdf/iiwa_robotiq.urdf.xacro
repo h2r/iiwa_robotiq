@@ -310,7 +310,7 @@
     <parent link="world"/>
     <child link="cabinet"/>
     <!--xyz ="1.0414 -0.14605 0.5"-->
-    <origin xyz ="1.143 -0.0508 0.5" rpy="0 0 0.418"/>
+    <origin xyz ="1.0 -0.36 0.5" rpy="0 0 0.418"/>
   </joint>
 
   <!-- The offset between iiwa_link_ee and palm was estimated to be 0.0975.
