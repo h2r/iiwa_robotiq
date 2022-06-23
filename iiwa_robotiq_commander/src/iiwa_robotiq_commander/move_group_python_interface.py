@@ -253,21 +253,10 @@ class MoveGroupPythonInterface(object):
 
     return executed_plan, all_close(pose_goal, self.group.get_current_pose().pose, 0.01), len(plan.joint_trajectory.points)
 
-  def get_cartesian_plan(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, start_position=None, start_quat=None, planning_time=None, eef_step=0.01):
-    # Assume start_position and start_quat are the pose of the end effector at the joints specified by start_state.
-    # All 3 must be specified
+  def get_cartesian_plan(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, planning_time=None, eef_step=0.01):
     # The goal can be specified as two lists of position and quaternion, or a goal message
 
-    # Note: The initial pose is currently not used, just the start_state joints
-
-    initial_state = None
-    initial_pose = None
-    if start_state != None and start_position != None and start_quat != None:
-      initial_state = start_state
-      initial_pose = pose_lists_to_msg(start_position, start_quat)
-    else:
-      initial_state = self.robot.get_current_state()
-      initial_pose = self.group.get_current_pose().pose
+    initial_state = start_state if start_state is not None else self.robot.get_current_state()
 
     self.group.set_start_state(initial_state)
 
@@ -279,18 +268,6 @@ class MoveGroupPythonInterface(object):
 
     waypoints = [goal_pose]
 
-    '''
-    wpose = copy.deepcopy(initial_pose)
-    wpose.position.z -= scale * 0.1  # First move up (z)
-    wpose.position.y += scale * 0.2  # and sideways (y)
-    waypoints.append(copy.deepcopy(wpose))
-
-    wpose.position.x += scale * 0.1  # Second move forward/backwards in (x)
-    waypoints.append(copy.deepcopy(wpose))
-
-    wpose.position.y -= scale * 0.1  # Third move sideways (y)
-    waypoints.append(copy.deepcopy(wpose))
-    '''
     if planning_time != None:
       original_planning_time = self.group.get_planning_time()
       self.group.set_planning_time(planning_time)
@@ -302,11 +279,11 @@ class MoveGroupPythonInterface(object):
       self.group.set_planning_time(original_planning_time)
     return plan, fraction
 
-  def go_to_cartesian_goal(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, start_position=None, start_quat=None, \
+  def go_to_cartesian_goal(self, pose_goal_position=None, pose_goal_quat=None, pose_goal=None, start_state=None, \
     eef_step=0.01, delay=1, wait_for_input=True, execute_plan=True):
     final_goal_pose = pose_goal if pose_goal != None else pose_lists_to_msg(pose_goal_position, pose_goal_quat)
     plan, fraction = self.get_cartesian_plan(pose_goal_position=pose_goal_position, pose_goal_quat=pose_goal_quat, pose_goal=pose_goal, \
-      start_state=start_state, start_position=start_position, start_quat=start_quat, eef_step=eef_step)
+      start_state=start_state, eef_step=eef_step)
     executed_plan = False
     if execute_plan:
       if fraction < 1.0:
